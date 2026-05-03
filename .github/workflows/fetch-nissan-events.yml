@@ -17,8 +17,8 @@ jobs:
         id: fetch
         run: |
           # ── Timestamps ────────────────────────────────────────────────────────
-          # Current time in UTC (for the output filename)
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
+          # Current time as Unix epoch (for the output filename)
+          TIMESTAMP=$(date -u +"%s")
 
           # Current time in JST (UTC+9)
           JST_NOW=$(TZ="Asia/Tokyo" date +"%Y-%m-%dT%H:%M:%S+09:00")
@@ -72,7 +72,7 @@ jobs:
             exit 0
           fi
 
-          git commit -m "chore: fetch nissan events [${{ steps.fetch.outputs.timestamp }}]"
+          git commit -m "chore: fetch nissan events [epoch: ${{ steps.fetch.outputs.timestamp }}]"
 
           # Try to push; on conflict, pull --rebase and retry once
           if ! git push origin main; then

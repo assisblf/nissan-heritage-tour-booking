@@ -31,8 +31,8 @@ nissan-heritage-tour-booking/
 │   └── workflows/
 │       └── fetch-nissan-events.yml   # Scheduled workflow
 ├── nissan-heritage-collection/
-│   ├── 2026-06-07T00-00-00Z.json     # Example snapshot
-│   ├── 2026-06-07T00-30-00Z.json
+│   ├── 1749254400.json     # Example snapshot
+│   ├── 1749256200.json
 │   └── ...
 └── README.md
 ```
@@ -63,7 +63,7 @@ https://coubic.com/api/v2/merchants/nissan-heritage-tour/booking_events
   &end=YYYY-MM-<last>T23:59:59%2B09:00
 ```
 
-The computed window (`JST now`, `Window start`, `Window end`) is printed at the top of each run's log so you can always verify what range was fetched.
+The computed window (`JST now`, `Window start`, `Window end`) is printed at the top of each run's log so you can always verify what range was fetched. Each snapshot file is named after the **Unix epoch** at the moment of the request (e.g. `1749254400.json`), making filenames sortable and unambiguous regardless of timezone.
 
 ---
 
