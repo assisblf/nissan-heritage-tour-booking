@@ -1,0 +1,104 @@
+name: Fetch Nissan Heritage Events
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch booking events
+        id: fetch
+        run: |
+          # ── Timestamps ────────────────────────────────────────────────────────
+          # Current time in UTC (for the output filename)
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
+
+          # Current time in JST (UTC+9)
+          JST_NOW=$(TZ="Asia/Tokyo" date +"%Y-%m-%dT%H:%M:%S+09:00")
+
+          # First day of next month in JST
+          NEXT_MONTH_START=$(TZ="Asia/Tokyo" date -d "$(date -d 'today' +%Y-%m-01) +1 month" +"%Y-%m-01T00:00:00+09:00")
+
+          # Last moment of the last day of next month in JST
+          NEXT_MONTH_END=$(TZ="Asia/Tokyo" date -d "$(date -d 'today' +%Y-%m-01) +2 months -1 day" +"%Y-%m-%dT23:59:59+09:00")
+
+          echo "🕐 JST now:        $JST_NOW"
+          echo "📅 Window start:   $NEXT_MONTH_START"
+          echo "📅 Window end:     $NEXT_MONTH_END"
+
+          # ── Build URL ─────────────────────────────────────────────────────────
+          # URL-encode the + in the timezone offset (%2B)
+          ENCODED_START=$(echo "$NEXT_MONTH_START" | sed 's/+/%2B/g')
+          ENCODED_END=$(echo "$NEXT_MONTH_END"   | sed 's/+/%2B/g')
+
+          URL="https://coubic.com/api/v2/merchants/nissan-heritage-tour/booking_events?renderer=fullcalendar&start=${ENCODED_START}&end=${ENCODED_END}"
+          echo "🌐 URL: $URL"
+
+          # ── Fetch ─────────────────────────────────────────────────────────────
+          OUTPUT_DIR="nissan-heritage-collection"
+          OUTPUT_FILE="${OUTPUT_DIR}/${TIMESTAMP}.json"
+          mkdir -p "$OUTPUT_DIR"
+
+          HTTP_CODE=$(curl -s -o /tmp/response_body.txt -w "%{http_code}" "$URL")
+          RESPONSE_BODY=$(cat /tmp/response_body.txt)
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "$RESPONSE_BODY" > "$OUTPUT_FILE"
+            echo "✅ Saved response to $OUTPUT_FILE (HTTP $HTTP_CODE)"
+          else
+            echo "{\"errorCode\": $HTTP_CODE, \"payload\": $RESPONSE_BODY}" > "$OUTPUT_FILE"
+            echo "⚠️ Saved error response to $OUTPUT_FILE (HTTP $HTTP_CODE)"
+          fi
+
+          echo "output_file=$OUTPUT_FILE" >> "$GITHUB_OUTPUT"
+          echo "timestamp=$TIMESTAMP"     >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add nissan-heritage-collection/
+
+          if git diff --cached --quiet; then
+            echo "ℹ️ No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: fetch nissan events [${{ steps.fetch.outputs.timestamp }}]"
+
+          # Try to push; on conflict, pull --rebase and retry once
+          if ! git push origin main; then
+            echo "⚠️ Push failed — attempting rebase pull..."
+
+            git fetch origin main
+
+            if git rebase origin/main; then
+              if ! git push origin main; then
+                echo "❌ Push failed again after rebase. Showing conflicting file contents:"
+                git diff HEAD origin/main -- nissan-heritage-collection/ | cat
+                for f in nissan-heritage-collection/*.json; do
+                  echo "--- $f ---"
+                  cat "$f"
+                done
+                exit 1
+              fi
+            else
+              echo "❌ Rebase failed. Showing conflicting file contents:"
+              for f in $(git diff --name-only --diff-filter=U); do
+                echo "--- $f ---"
+                cat "$f"
+              done
+              git rebase --abort
+              exit 1
+            fi
+          fi
+
+          echo "✅ Pushed successfully."
