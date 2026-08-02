@@ -17,10 +17,10 @@ jobs:
         id: fetch
         run: |
           # ── Timestamps ────────────────────────────────────────────────────────
-          # Current time as Unix epoch (for the output filename)
+          # Current time as Unix epoch (used as the entry key)
           TIMESTAMP=$(date -u +"%s")
 
-          # Current time in JST (UTC+9)
+          # Current time in JST (UTC+9) — used only for the query window below
           JST_NOW=$(TZ="Asia/Tokyo" date +"%Y-%m-%dT%H:%M:%S+09:00")
 
           # First day of next month in JST
@@ -33,8 +33,11 @@ jobs:
           echo "📅 Window start:   $NEXT_MONTH_START"
           echo "📅 Window end:     $NEXT_MONTH_END"
 
+          # ── Month key for grouping (same month as the query window) ─────────────
+          MONTH_KEY=$(echo "$NEXT_MONTH_START" | cut -c1-7)
+          echo "🗂️  Month key: $MONTH_KEY"
+
           # ── Build URL ─────────────────────────────────────────────────────────
-          # URL-encode the + in the timezone offset (%2B)
           ENCODED_START=$(echo "$NEXT_MONTH_START" | sed 's/+/%2B/g')
           ENCODED_END=$(echo "$NEXT_MONTH_END"   | sed 's/+/%2B/g')
 
@@ -43,19 +46,32 @@ jobs:
 
           # ── Fetch ─────────────────────────────────────────────────────────────
           OUTPUT_DIR="nissan-heritage-collection"
-          OUTPUT_FILE="${OUTPUT_DIR}/${TIMESTAMP}.json"
+          OUTPUT_FILE="${OUTPUT_DIR}/${MONTH_KEY}.json"
           mkdir -p "$OUTPUT_DIR"
 
           HTTP_CODE=$(curl -s -o /tmp/response_body.txt -w "%{http_code}" "$URL")
-          RESPONSE_BODY=$(cat /tmp/response_body.txt)
 
           if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
-            echo "$RESPONSE_BODY" > "$OUTPUT_FILE"
-            echo "✅ Saved response to $OUTPUT_FILE (HTTP $HTTP_CODE)"
+            CONTENT_FILE="/tmp/response_body.txt"
+            echo "✅ Fetched OK (HTTP $HTTP_CODE)"
           else
-            echo "{\"errorCode\": $HTTP_CODE, \"payload\": $RESPONSE_BODY}" > "$OUTPUT_FILE"
-            echo "⚠️ Saved error response to $OUTPUT_FILE (HTTP $HTTP_CODE)"
+            jq -n --argjson code "$HTTP_CODE" --arg payload "$(cat /tmp/response_body.txt)" \
+              '{errorCode: $code, payload: $payload}' > /tmp/error_body.json
+            CONTENT_FILE="/tmp/error_body.json"
+            echo "⚠️ Fetch failed (HTTP $HTTP_CODE)"
           fi
+
+          # ── Merge into month file ────────────────────────────────────────────
+          if [ -f "$OUTPUT_FILE" ]; then
+            jq --arg ts "$TIMESTAMP" --slurpfile content "$CONTENT_FILE" \
+              '. + {($ts): $content[0]}' "$OUTPUT_FILE" > /tmp/merged.json
+          else
+            jq -n --arg ts "$TIMESTAMP" --slurpfile content "$CONTENT_FILE" \
+              '{($ts): $content[0]}' > /tmp/merged.json
+          fi
+
+          mv /tmp/merged.json "$OUTPUT_FILE"
+          echo "✅ Saved entry $TIMESTAMP into $OUTPUT_FILE"
 
           echo "output_file=$OUTPUT_FILE" >> "$GITHUB_OUTPUT"
           echo "timestamp=$TIMESTAMP"     >> "$GITHUB_OUTPUT"
