@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heritage Watch — Nissan Heritage Collection Tour</title>
+    <style>
+        :root{
+            --bg: #131315;
+            --panel: #1b1b1e;
+            --panel-raised: #222226;
+            --line: #303034;
+            --text: #e9e7e2;
+            --text-dim: #8c8b8f;
+            --red: #c3002f;
+            --red-dim: #5a1420;
+            --green: #35b56a;
+            --green-dim: #163823;
+            --amber: #d8a13a;
+            --mono: 'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace;
+            --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+        html,body{ margin:0; padding:0; }
+        body{
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            min-height: 100vh;
+            padding: 32px 20px 140px;
+        }
+
+        .wrap{ max-width: 880px; margin: 0 auto; }
+
+        header{
+            display:flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 18px;
+        }
+        header .eyebrow{
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--red);
+        }
+        h1{
+            margin: 4px 0 0;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+        header .sub{
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .controls{
+            display:flex;
+            align-items:center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .controls label{
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+        input[type="month"], input[type="text"]{
+            background: var(--panel-raised);
+            border: 1px solid var(--line);
+            color: var(--text);
+            font-family: var(--mono);
+            font-size: 13px;
+            padding: 8px 10px;
+            border-radius: 4px;
+        }
+        input[type="month"]:focus, input[type="text"]:focus, button:focus{
+            outline: 2px solid var(--red);
+            outline-offset: 1px;
+        }
+        button{
+            background: var(--red);
+            color: #fff;
+            border: none;
+            font-family: var(--sans);
+            font-weight: 600;
+            font-size: 13px;
+            padding: 9px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover{ filter: brightness(1.08); }
+        button.ghost{
+            background: transparent;
+            border: 1px solid var(--line);
+            color: var(--text-dim);
+        }
+        button.ghost:hover{ color: var(--text); border-color: var(--text-dim); }
+
+        .path-toggle{
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dim);
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            background:none;border:none;padding:0;
+        }
+        .path-row{ display:none; align-items:center; gap:8px; margin-bottom:20px; }
+        .path-row.open{ display:flex; }
+        .path-row input{ flex:1; min-width:180px; }
+
+        #status{
+            font-family: var(--mono);
+            font-size: 13px;
+            color: var(--text-dim);
+            padding: 14px 0;
+        }
+        #status.error{ color: var(--red); }
+
+        .calendar{
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 18px;
+            display: none;
+        }
+        .cal-head{
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .cal-head .month-label{
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .cal-head .stamp{
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+        .weekdays, .days{
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+        .weekdays{
+            margin-bottom: 6px;
+        }
+        .weekdays div{
+            font-family: var(--mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            text-align: center;
+            letter-spacing: .06em;
+        }
+        .day{
+            aspect-ratio: 1 / 0.82;
+            border-radius: 5px;
+            background: var(--panel-raised);
+            border: 1px solid var(--line);
+            padding: 6px 6px;
+            display:flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .day.empty{ background: transparent; border-color: transparent; }
+        .day .num{
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        .day.has-event{ border-color: var(--line); }
+        .day.open{ background: var(--green-dim); border-color: var(--green); }
+        .day.full{ background: var(--red-dim); border-color: var(--red); }
+        .day .vac{
+            font-family: var(--mono);
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        .day.open .vac{ color: var(--green); }
+        .day.full .vac{ color: var(--red); }
+        .day .cap{
+            font-family: var(--mono);
+            font-size: 9px;
+            color: var(--text-dim);
+        }
+        .day .waiting{
+            font-family: var(--mono);
+            font-size: 8px;
+            color: var(--amber);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .legend{
+            display:flex;
+            gap: 18px;
+            margin-top: 16px;
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        .legend span{ display:flex; align-items:center; gap:6px; }
+        .swatch{ width:10px; height:10px; border-radius:2px; display:inline-block; }
+
+        /* Bottom fixed slider bar */
+        .slider-bar{
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            background: var(--panel);
+            border-top: 1px solid var(--line);
+            padding: 14px 20px 18px;
+            display: none;
+        }
+        .slider-bar.visible{ display:block; }
+        .slider-inner{
+            max-width: 880px;
+            margin: 0 auto;
+        }
+        .slider-top{
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .slider-top .snap-label{
+            font-family: var(--mono);
+            font-size: 12px;
+        }
+        .slider-top .snap-index{
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        .slider-controls{
+            display:flex;
+            align-items:center;
+            gap: 10px;
+        }
+        input[type="range"]{
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--line);
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb{
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--red);
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+        input[type="range"]::-moz-range-thumb{
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--red);
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+        .step-btn{
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display:flex; align-items:center; justify-content:center;
+            font-size: 14px;
+            padding: 0;
+        }
+
+        @media (prefers-reduced-motion: no-preference){
+            .day, .calendar{ transition: background .15s ease, border-color .15s ease; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header>
+        <div>
+            <div class="eyebrow">Heritage Watch</div>
+            <h1>Nissan Heritage Collection Tour — booking snapshots</h1>
+        </div>
+        <div class="sub" id="filename-label"></div>
+    </header>
+
+    <div class="controls">
+        <label for="month-input">Month</label>
+        <input type="month" id="month-input">
+        <button id="load-btn">Load</button>
+        <button class="path-toggle" id="path-toggle">change source path</button>
+    </div>
+
+    <div class="path-row" id="path-row">
+        <label for="path-input" style="white-space:nowrap;">Base path</label>
+        <input type="text" id="path-input" value="../nissan-heritage-collection/">
+    </div>
+
+    <div id="status">Pick a month and load its snapshots.</div>
+
+    <div class="calendar" id="calendar">
+        <div class="cal-head">
+            <div class="month-label" id="cal-month-label"></div>
+            <div class="stamp" id="cal-stamp"></div>
+        </div>
+        <div class="weekdays">
+            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+        </div>
+        <div class="days" id="cal-days"></div>
+        <div class="legend">
+            <span><i class="swatch" style="background:var(--green-dim);border:1px solid var(--green)"></i>open</span>
+            <span><i class="swatch" style="background:var(--red-dim);border:1px solid var(--red)"></i>full</span>
+            <span><i class="swatch" style="background:var(--panel-raised);border:1px solid var(--line)"></i>no event</span>
+        </div>
+    </div>
+</div>
+
+<div class="slider-bar" id="slider-bar">
+    <div class="slider-inner">
+        <div class="slider-top">
+            <div class="snap-label" id="snap-label">—</div>
+            <div class="snap-index" id="snap-index">—</div>
+        </div>
+        <div class="slider-controls">
+            <button class="step-btn ghost" id="prev-btn" aria-label="Previous snapshot">‹</button>
+            <input type="range" id="slider" min="0" max="0" value="0" step="1">
+            <button class="step-btn ghost" id="next-btn" aria-label="Next snapshot">›</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const monthInput = document.getElementById('month-input');
+        const loadBtn = document.getElementById('load-btn');
+        const pathToggle = document.getElementById('path-toggle');
+        const pathRow = document.getElementById('path-row');
+        const pathInput = document.getElementById('path-input');
+        const statusEl = document.getElementById('status');
+        const filenameLabel = document.getElementById('filename-label');
+        const calendar = document.getElementById('calendar');
+        const calMonthLabel = document.getElementById('cal-month-label');
+        const calStamp = document.getElementById('cal-stamp');
+        const calDays = document.getElementById('cal-days');
+        const sliderBar = document.getElementById('slider-bar');
+        const slider = document.getElementById('slider');
+        const snapLabel = document.getElementById('snap-label');
+        const snapIndex = document.getElementById('snap-index');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        let timestamps = [];   // sorted ascending strings
+        let dataset = {};      // full parsed JSON
+        let currentMonthKey = null;
+
+        // default to current month
+        const now = new Date();
+        monthInput.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+        pathToggle.addEventListener('click', () => pathRow.classList.toggle('open'));
+
+        loadBtn.addEventListener('click', loadMonth);
+        monthInput.addEventListener('keydown', e => { if(e.key === 'Enter') loadMonth(); });
+
+        async function loadMonth(){
+            const monthKey = monthInput.value; // "YYYY-MM"
+            if(!monthKey){
+                setStatus('Pick a month first.', true);
+                return;
+            }
+            currentMonthKey = monthKey;
+            const base = pathInput.value.trim().replace(/\/?$/, '/');
+            const url = `${base}${monthKey}.json`;
+            filenameLabel.textContent = url;
+            setStatus(`Loading ${url} …`);
+            calendar.style.display = 'none';
+            sliderBar.classList.remove('visible');
+
+            try{
+                const res = await fetch(url, { cache: 'no-store' });
+                if(!res.ok){
+                    setStatus(`Could not load ${url} (HTTP ${res.status}). Check the month or source path.`, true);
+                    return;
+                }
+                const json = await res.json();
+                dataset = json;
+                timestamps = Object.keys(json).sort((a,b) => Number(a) - Number(b));
+
+                if(timestamps.length === 0){
+                    setStatus(`${url} loaded, but has no snapshots yet.`, true);
+                    return;
+                }
+
+                slider.min = 0;
+                slider.max = timestamps.length - 1;
+                slider.value = timestamps.length - 1; // default to most recent
+                sliderBar.classList.add('visible');
+                setStatus('');
+                renderSnapshot(Number(slider.value));
+            } catch(err){
+                setStatus(`Failed to load ${url}: ${err.message}`, true);
+            }
+        }
+
+        slider.addEventListener('input', () => renderSnapshot(Number(slider.value)));
+        prevBtn.addEventListener('click', () => {
+            slider.value = Math.max(0, Number(slider.value) - 1);
+            renderSnapshot(Number(slider.value));
+        });
+        nextBtn.addEventListener('click', () => {
+            slider.value = Math.min(timestamps.length - 1, Number(slider.value) + 1);
+            renderSnapshot(Number(slider.value));
+        });
+
+        function setStatus(msg, isError){
+            statusEl.textContent = msg;
+            statusEl.classList.toggle('error', !!isError);
+        }
+
+        function fmtJST(ts){
+            const d = new Date(Number(ts) * 1000);
+            const fmt = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Tokyo',
+                year: 'numeric', month: 'short', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', hour12: false
+            });
+            return fmt.format(d) + ' JST';
+        }
+
+        function renderSnapshot(idx){
+            const ts = timestamps[idx];
+            const entry = dataset[ts];
+            snapLabel.textContent = fmtJST(ts);
+            snapIndex.textContent = `${idx + 1} / ${timestamps.length}  ·  epoch ${ts}`;
+            calStamp.textContent = `snapshot fetched ${fmtJST(ts)}`;
+
+            if(entry && typeof entry === 'object' && !Array.isArray(entry) && 'errorCode' in entry){
+                calendar.style.display = 'block';
+                calMonthLabel.textContent = currentMonthKey;
+                calDays.innerHTML = '';
+                const msg = document.createElement('div');
+                msg.style.gridColumn = '1 / -1';
+                msg.style.fontFamily = 'var(--mono)';
+                msg.style.fontSize = '13px';
+                msg.style.color = 'var(--red)';
+                msg.style.padding = '20px 4px';
+                msg.textContent = `Fetch error at this snapshot — HTTP ${entry.errorCode}: ${String(entry.payload).slice(0,200)}`;
+                calDays.appendChild(msg);
+                return;
+            }
+
+            const events = Array.isArray(entry) ? entry : [];
+            renderCalendar(currentMonthKey, events);
+        }
+
+        function renderCalendar(monthKey, events){
+            calendar.style.display = 'block';
+            const [y, m] = monthKey.split('-').map(Number);
+            calMonthLabel.textContent = new Date(y, m - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            // map day-of-month -> event (assume date "YYYY-MM-DD HH:MM" local/JST wall time)
+            const byDay = {};
+            for(const ev of events){
+                if(!ev.start) continue;
+                const dayNum = Number(ev.start.slice(8, 10));
+                byDay[dayNum] = ev;
+            }
+
+            const firstDow = new Date(y, m - 1, 1).getDay(); // 0=Sun
+            const daysInMonth = new Date(y, m, 0).getDate();
+
+            calDays.innerHTML = '';
+            for(let i = 0; i < firstDow; i++){
+                const blank = document.createElement('div');
+                blank.className = 'day empty';
+                calDays.appendChild(blank);
+            }
+
+            for(let d = 1; d <= daysInMonth; d++){
+                const cell = document.createElement('div');
+                cell.className = 'day';
+                const num = document.createElement('div');
+                num.className = 'num';
+                num.textContent = d;
+                cell.appendChild(num);
+
+                const ev = byDay[d];
+                if(ev){
+                    cell.classList.add('has-event', ev.full ? 'full' : 'open');
+                    const vac = document.createElement('div');
+                    vac.className = 'vac';
+                    vac.textContent = ev.full ? 'FULL' : `${ev.vacancy} open`;
+                    const cap = document.createElement('div');
+                    cap.className = 'cap';
+                    cap.textContent = `/ ${ev.capacity} cap`;
+                    cell.appendChild(vac);
+                    cell.appendChild(cap);
+                    if(ev.waitingList){
+                        const w = document.createElement('div');
+                        w.className = 'waiting';
+                        w.textContent = 'waitlist';
+                        cell.appendChild(w);
+                    }
+                }
+                calDays.appendChild(cell);
+            }
+        }
+    })();
+</script>
+</body>
+</html>
