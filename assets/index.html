@@ -402,7 +402,9 @@
                 }
                 const json = await res.json();
                 dataset = json;
-                timestamps = Object.keys(json).sort((a,b) => Number(a) - Number(b));
+                timestamps = Object.keys(json)
+                    .filter(ts => hasData(json[ts]))
+                    .sort((a,b) => Number(a) - Number(b));
 
                 if(timestamps.length === 0){
                     setStatus(`${url} loaded, but has no snapshots yet.`, true);
@@ -429,6 +431,12 @@
             slider.value = Math.min(timestamps.length - 1, Number(slider.value) + 1);
             renderSnapshot(Number(slider.value));
         });
+
+        function hasData(entry){
+            if(entry === null || entry === undefined) return false;
+            if(Array.isArray(entry)) return entry.length > 0;
+            return true; // error objects and non-empty objects count as data
+        }
 
         function setStatus(msg, isError){
             statusEl.textContent = msg;
