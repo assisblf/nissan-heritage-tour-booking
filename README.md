@@ -1,6 +1,6 @@
 # nissan-heritage-tour-booking
 
-Automated data collector for the **Nissan Heritage Tour** booking events, powered by a GitHub Actions workflow that polls the [Coubic](https://coubic.com) API every 30 minutes and snapshots the responses as JSON files.
+Automated data collector for the **Nissan Heritage Tour** booking events, powered by a GitHub Actions workflow that polls the [Coubic](https://coubic.com) API every 30 minutes and snapshots the responses as JSON, grouped by month. Includes a static HTML viewer to browse vacancy history on a calendar.
 
 ---
 
@@ -8,18 +8,46 @@ Automated data collector for the **Nissan Heritage Tour** booking events, powere
 
 A scheduled workflow (`.github/workflows/fetch-nissan-events.yml`) runs every 30 minutes and:
 
-1. **Fetches** the booking events from the Coubic API for the Nissan Heritage Tour
-2. **Saves** the response as a timestamped JSON file inside `nissan-heritage-collection/`
-3. **Commits and pushes** the new file to `main` automatically
+1. **Fetches** the booking events from the Coubic API for the Nissan Heritage Tour (window: next calendar month, JST)
+2. **Merges** the response into `nissan-heritage-collection/<YYYY-MM>.json`, keyed by the Unix epoch of the request — `<YYYY-MM>` is the same target month used in the query window
+3. **Commits and pushes** the updated file to `main` automatically
 
-If the API returns an error, the file is saved in the following format instead of the raw payload:
+If the API returns an error, that snapshot's value is saved in this format instead of the raw payload:
 
 ```json
 {
   "errorCode": 404,
-  "payload": { ... }
+  "payload": "..."
 }
 ```
+
+---
+
+## Data format
+
+Each monthly file is a JSON object keyed by Unix epoch (request time), with the raw Coubic response (or error object) as the value:
+
+```json
+{
+  "1749254400": [
+    {
+      "title": "８月見学会【Heritage Collection Tour in Aug.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "full": true,
+      "start": "2026-08-04 10:00",
+      "end": "2026-08-04 11:30",
+      "...": "..."
+    }
+  ],
+  "1749256200": {
+    "errorCode": 500,
+    "payload": "..."
+  }
+}
+```
+
+An empty array (`[]`) means the tour dates for that month hadn't been disclosed yet at that snapshot.
 
 ---
 
@@ -31,9 +59,11 @@ nissan-heritage-tour-booking/
 │   └── workflows/
 │       └── fetch-nissan-events.yml   # Scheduled workflow
 ├── nissan-heritage-collection/
-│   ├── 1749254400.json     # Example snapshot
-│   ├── 1749256200.json
+│   ├── 2026-08.json         # All snapshots targeting Aug 2026
+│   ├── 2026-09.json
 │   └── ...
+├── 1_merge_files_by_month.py  # One-off migration script (old per-timestamp files → grouped format)
+├── heritage-watch.html        # Static viewer: month picker + timestamp slider + calendar
 └── README.md
 ```
 
@@ -63,7 +93,32 @@ https://coubic.com/api/v2/merchants/nissan-heritage-tour/booking_events
   &end=YYYY-MM-<last>T23:59:59%2B09:00
 ```
 
-The computed window (`JST now`, `Window start`, `Window end`) is printed at the top of each run's log so you can always verify what range was fetched. Each snapshot file is named after the **Unix epoch** at the moment of the request (e.g. `1749254400.json`), making filenames sortable and unambiguous regardless of timezone.
+The computed window (`JST now`, `Window start`, `Window end`) is printed at the top of each run's log. The same `YYYY-MM` derived for the window is used as the output filename, and each entry inside that file is keyed by the Unix epoch of the request — so entries stay sortable and unambiguous regardless of timezone.
+
+---
+
+## Viewing the data
+
+Open `heritage-watch.html` (served over http/https, e.g. via GitHub Pages — `fetch` won't work from a local `file://` path) to:
+
+1. Pick a month
+2. Load `nissan-heritage-collection/<month>.json`
+3. Slide across the snapshots taken for that month
+4. See a calendar with per-day vacancy/capacity for the selected snapshot
+
+Snapshots with no data (`[]`) are skipped by the slider; error snapshots are kept and shown as an error state.
+
+---
+
+## Migrating old per-timestamp files
+
+`1_merge_files_by_month.py` is a one-off script that converts the legacy `nissan-heritage-collection/<epoch>.json` files (one file per request) into the grouped `<YYYY-MM>.json` format. Run it once from the repo root:
+
+```bash
+python3 1_merge_files_by_month.py
+```
+
+It groups each file by the target month it fetched (derived from the same next-month logic as the workflow), merges into any existing `<YYYY-MM>.json`, and deletes the original per-timestamp files. Only needed once, for repos with data from before the format change.
 
 ---
 
