@@ -1,6 +1,9 @@
 # nissan-heritage-tour-booking
 
-Automated data collector for the **Nissan Heritage Tour** booking events, powered by a GitHub Actions workflow that polls the [Coubic](https://coubic.com) API every 30 minutes and snapshots the responses as JSON, grouped by month. Includes a static HTML viewer to browse vacancy history on a calendar.
+This is a project that polls and snapshots data from Nissan Heritage tour booking and presents it in the following page:
+https://assisblf.github.io/nissan-heritage-tour-booking
+
+It works as an automated data collector for the **Nissan Heritage Tour** booking events, powered by a GitHub Actions workflow that polls the [Coubic](https://coubic.com) API every 30 minutes and snapshots the responses as JSON, grouped by month. Includes a static HTML viewer to browse vacancy history on a calendar.
 
 ---
 
