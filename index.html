@@ -31,7 +31,7 @@
             padding: 32px 20px 140px;
         }
 
-        .wrap{ max-width: 880px; margin: 0 auto; }
+        .wrap{ max-width: 980px; margin: 0 auto; }
 
         header{
             display:flex;
@@ -60,6 +60,8 @@
             font-family: var(--mono);
             font-size: 12px;
             color: var(--text-dim);
+            word-break: break-all;
+            max-width: 100%;
         }
 
         .controls{
@@ -67,7 +69,7 @@
             align-items:center;
             gap: 14px;
             flex-wrap: wrap;
-            margin-bottom: 24px;
+            margin-bottom: 22px;
         }
         .controls label{
             font-family: var(--mono);
@@ -76,7 +78,7 @@
             text-transform: uppercase;
             letter-spacing: .08em;
         }
-        input[type="month"], input[type="text"]{
+        input[type="month"]{
             background: var(--panel-raised);
             border: 1px solid var(--line);
             color: var(--text);
@@ -84,8 +86,9 @@
             font-size: 13px;
             padding: 8px 10px;
             border-radius: 4px;
+            color-scheme: dark;
         }
-        input[type="month"]:focus, input[type="text"]:focus, button:focus{
+        input[type="month"]:focus, button:focus-visible{
             outline: 2px solid var(--red);
             outline-offset: 1px;
         }
@@ -108,25 +111,15 @@
         }
         button.ghost:hover{ color: var(--text); border-color: var(--text-dim); }
 
-        .path-toggle{
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-dim);
-            cursor: pointer;
-            text-decoration: underline;
-            text-underline-offset: 3px;
-            background:none;border:none;padding:0;
-        }
-        .path-row{ display:none; align-items:center; gap:8px; margin-bottom:20px; }
-        .path-row.open{ display:flex; }
-        .path-row input{ flex:1; min-width:180px; }
-
         #status{
             font-family: var(--mono);
             font-size: 13px;
             color: var(--text-dim);
-            padding: 14px 0;
+            padding: 0 0 14px;
+            min-height: 14px;
+            word-break: break-word;
         }
+        #status:empty{ padding: 0; min-height: 0; }
         #status.error{ color: var(--red); }
 
         .calendar{
@@ -140,6 +133,8 @@
             display:flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
             margin-bottom: 14px;
         }
         .cal-head .month-label{
@@ -153,12 +148,10 @@
         }
         .weekdays, .days{
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, minmax(0, 1fr));
             gap: 6px;
         }
-        .weekdays{
-            margin-bottom: 6px;
-        }
+        .weekdays{ margin-bottom: 6px; }
         .weekdays div{
             font-family: var(--mono);
             font-size: 10px;
@@ -167,50 +160,66 @@
             text-align: center;
             letter-spacing: .06em;
         }
+
+        /* Day cell: grows with the number of slots */
         .day{
-            aspect-ratio: 1 / 0.82;
+            min-height: 92px;
             border-radius: 5px;
             background: var(--panel-raised);
             border: 1px solid var(--line);
-            padding: 6px 6px;
+            padding: 6px;
             display:flex;
             flex-direction: column;
-            justify-content: space-between;
-            position: relative;
+            gap: 5px;
         }
         .day.empty{ background: transparent; border-color: transparent; }
+        .day .day-head{
+            display:flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
         .day .num{
             font-family: var(--mono);
             font-size: 11px;
             color: var(--text-dim);
         }
-        .day.has-event{ border-color: var(--line); }
-        .day.open{ background: var(--green-dim); border-color: var(--green); }
-        .day.full{ background: var(--red-dim); border-color: var(--red); }
-        .day .vac{
+        .day .dow{ display:none; font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+        .day.open{ border-color: var(--green); }
+        .day.full{ border-color: var(--red); }
+        .day.open .num{ color: var(--green); }
+        .day.full .num{ color: var(--red); }
+
+        .slots{ display:flex; flex-direction: column; gap: 3px; }
+        .slot{
+            display:flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+            border-radius: 3px;
+            padding: 3px 5px;
             font-family: var(--mono);
-            font-size: 12px;
-            font-weight: 600;
-            line-height: 1.2;
+            font-size: 11px;
+            line-height: 1.25;
+            border: 1px solid transparent;
         }
-        .day.open .vac{ color: var(--green); }
-        .day.full .vac{ color: var(--red); }
-        .day .cap{
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--text-dim);
-        }
-        .day .waiting{
-            font-family: var(--mono);
-            font-size: 8px;
+        .slot.open{ background: var(--green-dim); border-color: var(--green); }
+        .slot.full{ background: var(--red-dim); border-color: var(--red); }
+        .slot .time{ color: var(--text); font-weight: 600; }
+        .slot .state{ display:flex; align-items: baseline; gap: 2px; white-space: nowrap; }
+        .slot.open .state b{ color: var(--green); font-weight: 600; }
+        .slot.full .state b{ color: var(--red); font-weight: 600; }
+        .slot .state small{ color: var(--text-dim); font-size: 9px; }
+        .slot .wl{
             color: var(--amber);
-            text-transform: uppercase;
+            font-size: 8px;
             letter-spacing: .04em;
+            margin-left: 3px;
         }
 
         .legend{
             display:flex;
-            gap: 18px;
+            flex-wrap: wrap;
+            gap: 8px 18px;
             margin-top: 16px;
             font-family: var(--mono);
             font-size: 11px;
@@ -230,7 +239,7 @@
         }
         .slider-bar.visible{ display:block; }
         .slider-inner{
-            max-width: 880px;
+            max-width: 980px;
             margin: 0 auto;
         }
         .slider-top{
@@ -241,20 +250,9 @@
             gap: 10px;
             flex-wrap: wrap;
         }
-        .slider-top .snap-label{
-            font-family: var(--mono);
-            font-size: 12px;
-        }
-        .slider-top .snap-index{
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-dim);
-        }
-        .slider-controls{
-            display:flex;
-            align-items:center;
-            gap: 10px;
-        }
+        .slider-top .snap-label{ font-family: var(--mono); font-size: 12px; }
+        .slider-top .snap-index{ font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+        .slider-controls{ display:flex; align-items:center; gap: 10px; }
         input[type="range"]{
             flex: 1;
             -webkit-appearance: none;
@@ -287,8 +285,18 @@
             padding: 0;
         }
 
+        /* Narrow screens: one column, only days that have events */
+        @media (max-width: 720px){
+            .weekdays{ display:none; }
+            .days{ grid-template-columns: 1fr; }
+            .day.empty, .day.no-events{ display:none; }
+            .day .dow{ display:inline; }
+            .day .day-head{ justify-content: flex-start; gap: 8px; }
+            .slot{ font-size: 12px; padding: 5px 8px; }
+        }
+
         @media (prefers-reduced-motion: no-preference){
-            .day, .calendar{ transition: background .15s ease, border-color .15s ease; }
+            .day, .calendar, .slot{ transition: background .15s ease, border-color .15s ease; }
         }
     </style>
 </head>
@@ -306,13 +314,8 @@
         <label for="month-input">Month</label>
         <input type="month" id="month-input">
         <button id="load-btn">Load</button>
-        <button class="path-toggle" id="path-toggle">change source path</button>
     </div>
 
-    <div class="path-row" id="path-row">
-        <label for="path-input" style="white-space:nowrap;">Base path</label>
-        <input type="text" id="path-input" value="nissan-heritage-collection/">
-    </div>
 
     <div id="status">Pick a month and load its snapshots.</div>
 
@@ -326,9 +329,10 @@
         </div>
         <div class="days" id="cal-days"></div>
         <div class="legend">
-            <span><i class="swatch" style="background:var(--green-dim);border:1px solid var(--green)"></i>open</span>
+            <span><i class="swatch" style="background:var(--green-dim);border:1px solid var(--green)"></i>open (spots left / capacity)</span>
             <span><i class="swatch" style="background:var(--red-dim);border:1px solid var(--red)"></i>full</span>
             <span><i class="swatch" style="background:var(--panel-raised);border:1px solid var(--line)"></i>no event</span>
+            <span><b style="color:var(--amber);font-size:9px;letter-spacing:.04em">WL</b>waiting list</span>
         </div>
     </div>
 </div>
@@ -349,11 +353,12 @@
 
 <script>
     (function(){
+        // Monthly JSON files live next to this page: ./nissan-heritage-collection/YYYY-MM.json
+        const BASE_PATH = './nissan-heritage-collection';
+        const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
         const monthInput = document.getElementById('month-input');
         const loadBtn = document.getElementById('load-btn');
-        const pathToggle = document.getElementById('path-toggle');
-        const pathRow = document.getElementById('path-row');
-        const pathInput = document.getElementById('path-input');
         const statusEl = document.getElementById('status');
         const filenameLabel = document.getElementById('filename-label');
         const calendar = document.getElementById('calendar');
@@ -375,8 +380,6 @@
         const now = new Date();
         monthInput.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
 
-        pathToggle.addEventListener('click', () => pathRow.classList.toggle('open'));
-
         loadBtn.addEventListener('click', loadMonth);
         monthInput.addEventListener('keydown', e => { if(e.key === 'Enter') loadMonth(); });
 
@@ -387,8 +390,7 @@
                 return;
             }
             currentMonthKey = monthKey;
-            const base = pathInput.value.trim().replace(/\/?$/, '/');
-            const url = `${base}${monthKey}.json`;
+            const url = `${BASE_PATH}/${monthKey}.json`;
             filenameLabel.textContent = url;
             setStatus(`Loading ${url} …`);
             calendar.style.display = 'none';
@@ -397,7 +399,7 @@
             try{
                 const res = await fetch(url, { cache: 'no-store' });
                 if(!res.ok){
-                    setStatus(`Could not load ${url} (HTTP ${res.status}). Check the month or source path.`, true);
+                    setStatus(`Could not load ${url} (HTTP ${res.status}). Check the month.`, true);
                     return;
                 }
                 const json = await res.json();
@@ -418,7 +420,7 @@
                 setStatus('');
                 renderSnapshot(Number(slider.value));
             } catch(err){
-                setStatus(`Failed to load ${url}: ${err.message}`, true);
+                setStatus(`Failed to load ${url}: ${err.message}. If you opened this file directly (file://), serve it over HTTP instead.`, true);
             }
         }
 
@@ -479,17 +481,27 @@
             renderCalendar(currentMonthKey, events);
         }
 
+        function isFull(ev){
+            return !!ev.full || Number(ev.vacancy) <= 0;
+        }
+
         function renderCalendar(monthKey, events){
             calendar.style.display = 'block';
             const [y, m] = monthKey.split('-').map(Number);
             calMonthLabel.textContent = new Date(y, m - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-            // map day-of-month -> event (assume date "YYYY-MM-DD HH:MM" local/JST wall time)
+            // FIX: group ALL events of each day (previously only the last one per day was kept).
+            // "start" is a wall-clock string like "YYYY-MM-DD HH:MM".
             const byDay = {};
             for(const ev of events){
-                if(!ev.start) continue;
-                const dayNum = Number(ev.start.slice(8, 10));
-                byDay[dayNum] = ev;
+                if(!ev || !ev.start) continue;
+                const start = String(ev.start);
+                const dayNum = Number(start.slice(8, 10));
+                if(!dayNum) continue;
+                (byDay[dayNum] = byDay[dayNum] || []).push(ev);
+            }
+            for(const d in byDay){
+                byDay[d].sort((a, b) => String(a.start).localeCompare(String(b.start)));
             }
 
             const firstDow = new Date(y, m - 1, 1).getDay(); // 0=Sun
@@ -505,32 +517,68 @@
             for(let d = 1; d <= daysInMonth; d++){
                 const cell = document.createElement('div');
                 cell.className = 'day';
-                const num = document.createElement('div');
+
+                const head = document.createElement('div');
+                head.className = 'day-head';
+                const num = document.createElement('span');
                 num.className = 'num';
                 num.textContent = d;
-                cell.appendChild(num);
+                const dow = document.createElement('span');
+                dow.className = 'dow';
+                dow.textContent = WEEKDAYS[new Date(y, m - 1, d).getDay()];
+                head.appendChild(num);
+                head.appendChild(dow);
+                cell.appendChild(head);
 
-                const ev = byDay[d];
-                if(ev){
-                    cell.classList.add('has-event', ev.full ? 'full' : 'open');
-                    const vac = document.createElement('div');
-                    vac.className = 'vac';
-                    vac.textContent = ev.full ? 'FULL' : `${ev.vacancy} open`;
-                    const cap = document.createElement('div');
-                    cap.className = 'cap';
-                    cap.textContent = `/ ${ev.capacity} cap`;
-                    cell.appendChild(vac);
-                    cell.appendChild(cap);
-                    if(ev.waitingList){
-                        const w = document.createElement('div');
-                        w.className = 'waiting';
-                        w.textContent = 'waitlist';
-                        cell.appendChild(w);
+                const evs = byDay[d] || [];
+                if(evs.length === 0){
+                    cell.classList.add('no-events');
+                } else {
+                    const anyOpen = evs.some(ev => !isFull(ev));
+                    cell.classList.add('has-event', anyOpen ? 'open' : 'full');
+
+                    const list = document.createElement('div');
+                    list.className = 'slots';
+                    for(const ev of evs){
+                        const full = isFull(ev);
+                        const slot = document.createElement('div');
+                        slot.className = 'slot ' + (full ? 'full' : 'open');
+                        slot.title = `${ev.start} — ` + (full
+                            ? `full (capacity ${ev.capacity})`
+                            : `${ev.vacancy} of ${ev.capacity} spots open`)
+                            + (ev.waitingList ? ' — waiting list available' : '');
+
+                        const time = document.createElement('span');
+                        time.className = 'time';
+                        time.textContent = String(ev.start).slice(11, 16);
+
+                        const state = document.createElement('span');
+                        state.className = 'state';
+                        const b = document.createElement('b');
+                        b.textContent = full ? 'FULL' : String(ev.vacancy);
+                        const small = document.createElement('small');
+                        small.textContent = `/${ev.capacity}`;
+                        state.appendChild(b);
+                        state.appendChild(small);
+                        if(ev.waitingList){
+                            const wl = document.createElement('span');
+                            wl.className = 'wl';
+                            wl.textContent = 'WL';
+                            state.appendChild(wl);
+                        }
+
+                        slot.appendChild(time);
+                        slot.appendChild(state);
+                        list.appendChild(slot);
                     }
+                    cell.appendChild(list);
                 }
                 calDays.appendChild(cell);
             }
         }
+
+        // auto-load on open
+        loadMonth();
     })();
 </script>
 </body>
