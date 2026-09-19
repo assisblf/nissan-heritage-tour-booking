@@ -376,9 +376,10 @@
         let dataset = {};      // full parsed JSON
         let currentMonthKey = null;
 
-        // default to current month
+        // default to next month (Date rolls Dec -> Jan of the next year automatically)
         const now = new Date();
-        monthInput.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        monthInput.value = `${next.getFullYear()}-${String(next.getMonth()+1).padStart(2,'0')}`;
 
         loadBtn.addEventListener('click', loadMonth);
         monthInput.addEventListener('keydown', e => { if(e.key === 'Enter') loadMonth(); });
