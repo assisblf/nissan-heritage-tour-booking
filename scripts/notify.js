@@ -43,7 +43,8 @@ async function notify(message, env = process.env) {
       const res = await fetch(env.DISCORD_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: chunk }),
+        // flags: 4 = SUPPRESS_EMBEDS, so each slot link doesn't add a preview card.
+        body: JSON.stringify({ content: chunk, flags: 4 }),
       });
       console.error(`Discord response: ${res.status}`);
       if (!res.ok) failures.push(`Discord HTTP ${res.status}: ${await res.text()}`);
@@ -57,7 +58,12 @@ async function notify(message, env = process.env) {
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ chat_id: env.TELEGRAM_CHAT_ID, text: chunk }),
+        body: new URLSearchParams({
+          chat_id: env.TELEGRAM_CHAT_ID,
+          text: chunk,
+          parse_mode: 'Markdown',
+          disable_web_page_preview: 'true',
+        }),
       });
       console.error(`Telegram response: ${res.status}`);
       if (!res.ok) failures.push(`Telegram HTTP ${res.status}: ${await res.text()}`);
