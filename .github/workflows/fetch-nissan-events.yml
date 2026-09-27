@@ -12,13 +12,13 @@ concurrency:
 
 jobs:
   fetch-and-commit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
@@ -39,7 +39,7 @@ jobs:
         run: |
           node scripts/detect-new-vacancies.js \
             "${{ steps.fetch.outputs.content_file }}" \
-            "state/available-slots" >> "$GITHUB_OUTPUT"
+            "state/available_vacancies" >> "$GITHUB_OUTPUT"
 
       # Commit before notifying: if the push fails, the job stops here and the
       # next run re-detects the same slots, instead of sending a duplicate.

@@ -70,7 +70,7 @@ async function fetchEvents() {
   const url = buildUrl(startStamp, endStamp);
   console.error(`🌐 URL: ${url}`);
 
-  const outputDir = 'nissan-heritage-collection';
+  const outputDir = 'state/snapshots';
   fs.mkdirSync(outputDir, { recursive: true });
   const outputFile = path.join(outputDir, `${monthKey}.json`);
 
