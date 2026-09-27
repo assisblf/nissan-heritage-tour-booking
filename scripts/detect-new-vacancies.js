@@ -53,9 +53,8 @@ function detectNewVacancies(events, stateDir) {
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// Groups slots by day (blank line between days, so notify.js splits long
-// messages on day boundaries). Times are Markdown links, which both Discord
-// and Telegram (parse_mode=Markdown) render as clickable text.
+// Groups slots by day, with a blank line between days. Times are Markdown
+// links, which Telegram (parse_mode=Markdown) renders as clickable text.
 // `start`/`end` look like "2026-10-03 10:00".
 function formatMessage(slots, knownVacancy) {
   const byDay = new Map();

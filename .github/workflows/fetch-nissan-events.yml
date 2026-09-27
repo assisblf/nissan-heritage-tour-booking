@@ -43,8 +43,9 @@ jobs:
 
       - name: Send notification
         if: steps.detect.outputs.has_new == 'true'
+        # A failed notification shouldn't stop the snapshot from being committed.
+        continue-on-error: true
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: node scripts/notify.js "${{ steps.detect.outputs.message_file }}"

@@ -5,83 +5,67 @@ const fs = require('fs');
 
 const TITLE = '🚗 New opening on the Nissan Heritage Tour!';
 const LINK = 'https://assisblf.github.io/nissan-heritage-tour-booking';
+const TRUNCATED_NOTE = '… (truncated, see the site for all slots)';
 
-// Discord caps messages at 2000 chars (Telegram at 4096), so long slot
-// lists are split on the blank lines between slots.
-const MAX_LENGTH = 1900;
+// Telegram caps messages at 4096 characters. JS string length counts
+// UTF-16 units, which is what Telegram counts too.
+const MAX_LENGTH = 4096;
 
-function splitMessage(text) {
-  const chunks = [];
-  let current = '';
-  for (const block of text.split('\n\n')) {
-    const next = current ? `${current}\n\n${block}` : block;
-    if (next.length > MAX_LENGTH && current) {
-      chunks.push(current);
-      current = block;
-    } else {
-      current = next;
-    }
+// Builds the full message, dropping whole lines from the end of `message`
+// when it's too long, so a Markdown link is never cut in half.
+function buildMessage(message) {
+  const wrap = (body) => `${TITLE}\n\n${body}\n\n🔗 ${LINK}`;
+  let full = wrap(message);
+  if (full.length <= MAX_LENGTH) return full;
+
+  const lines = message.split('\n');
+  while (lines.length && full.length > MAX_LENGTH) {
+    lines.pop();
+    full = wrap(`${lines.join('\n').trimEnd()}\n${TRUNCATED_NOTE}`);
   }
-  if (current) chunks.push(current);
-  return chunks;
+  return full;
 }
 
-// Sends `message` to whichever channel has its env vars set. Works the
-// same locally (exported shell vars) or in CI (repo secrets) — the
-// function itself doesn't know or care which.
-// Throws if any configured channel rejects the message, so the workflow
-// stops before committing the updated state and the next run retries.
+// Sends `message` to Telegram when TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID
+// are set. Works the same locally (exported shell vars) or in CI (repo
+// secrets). Never throws: a failed send is logged and reported in the
+// return value, so one bad notification doesn't break the pipeline.
 async function notify(message, env = process.env) {
-  const fullMessage = `${TITLE}\n\n${message}\n\n🔗 ${LINK}`;
-  let sentAny = false;
-  const failures = [];
+  const fullMessage = buildMessage(message);
 
-  const chunks = splitMessage(fullMessage);
-
-  if (env.DISCORD_WEBHOOK_URL) {
-    for (const chunk of chunks) {
-      const res = await fetch(env.DISCORD_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // flags: 4 = SUPPRESS_EMBEDS, so each slot link doesn't add a preview card.
-        body: JSON.stringify({ content: chunk, flags: 4 }),
-      });
-      console.error(`Discord response: ${res.status}`);
-      if (!res.ok) failures.push(`Discord HTTP ${res.status}: ${await res.text()}`);
-    }
-    sentAny = true;
-  }
-
-  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
-    const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`;
-    for (const chunk of chunks) {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          chat_id: env.TELEGRAM_CHAT_ID,
-          text: chunk,
-          parse_mode: 'Markdown',
-          disable_web_page_preview: 'true',
-        }),
-      });
-      console.error(`Telegram response: ${res.status}`);
-      if (!res.ok) failures.push(`Telegram HTTP ${res.status}: ${await res.text()}`);
-    }
-    sentAny = true;
-  }
-
-  if (!sentAny) {
-    console.error('⚠️ No notification channel configured — set DISCORD_WEBHOOK_URL or TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID.');
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) {
+    console.error('⚠️ No notification channel configured — set TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID.');
     console.error('--- message that would have been sent ---');
     console.error(fullMessage);
+    return { sent: false, error: null };
   }
 
-  if (failures.length) {
-    throw new Error(`Notification failed:\n${failures.join('\n')}`);
+  let error = null;
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        chat_id: env.TELEGRAM_CHAT_ID,
+        text: fullMessage,
+        parse_mode: 'Markdown',
+        disable_web_page_preview: 'true',
+      }),
+    });
+    console.error(`Telegram response: ${res.status}`);
+    if (!res.ok) error = `Telegram HTTP ${res.status}: ${await res.text()}`;
+  } catch (err) {
+    error = `Telegram request failed: ${err.message}`;
   }
 
-  return { sentAny };
+  if (error) {
+    console.error(`❌ Notification failed: ${error}`);
+    // Shows up as a warning annotation on the workflow run.
+    if (env.GITHUB_ACTIONS) console.log(`::warning title=Notification failed::${error}`);
+    return { sent: false, error };
+  }
+
+  return { sent: true, error: null };
 }
 
 module.exports = { notify };
@@ -92,9 +76,5 @@ if (require.main === module) {
     console.error('Usage: notify.js <message_file>');
     process.exit(1);
   }
-  const message = fs.readFileSync(messageFile, 'utf8');
-  notify(message).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  notify(fs.readFileSync(messageFile, 'utf8'));
 }
