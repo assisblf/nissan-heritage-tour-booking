@@ -6,19 +6,12 @@
 //
 // Usage: node scripts/run-local.js [--commit]
 
-const { fetchEvents } = require('./fetch-events');
-const { mergeSnapshot } = require('./merge-snapshot');
-const { detectNewVacancies } = require('./detect-new-vacancies');
+const { fetchAndDetect } = require('./fetch-and-detect');
 const { notify } = require('./notify');
 const { commitAndPush } = require('./commit-and-push');
 
 (async () => {
-  const { events, errorPayload, success, timestamp, outputFile } = await fetchEvents();
-  console.log(`→ fetched: success=${success}`);
-
-  mergeSnapshot(outputFile, success ? events : errorPayload, timestamp);
-
-  const detection = success ? detectNewVacancies(events, 'state/available-slots') : null;
+  const { timestamp, detection } = await fetchAndDetect();
 
   // Commit before notifying so a failed push doesn't leave a sent
   // notification without persisted state (which would cause a duplicate).

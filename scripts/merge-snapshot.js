@@ -2,10 +2,12 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 
 // Merges `content` (events array or error payload) into outputFile, keyed
 // by epoch timestamp. Creates the file if it doesn't exist yet.
 function mergeSnapshot(outputFile, content, timestamp) {
+  fs.mkdirSync(path.dirname(outputFile), { recursive: true });
   let data = {};
   if (fs.existsSync(outputFile)) {
     data = JSON.parse(fs.readFileSync(outputFile, 'utf8'));

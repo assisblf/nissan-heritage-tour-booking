@@ -1,8 +1,5 @@
-#!/usr/bin/env node
 'use strict';
 
-const fs = require('fs');
-const os = require('os');
 const path = require('path');
 
 function pad(n) {
@@ -26,13 +23,19 @@ function currentJSTDate() {
   return { year: Number(parts.year), month: Number(parts.month), day: Number(parts.day) };
 }
 
-// Computes the next-month JST query window using UTC as a pure calendar
-// calculator (no real timezone conversion happening — the numbers ARE
-// the JST wall-clock values, just labeled with +09:00).
-function nextMonthWindow() {
+// Months fetched on every run, as offsets from the current JST month:
+// 0 = current month, 1 = next month. Each month is its own request, since
+// the API rejects windows longer than ~7 weeks (HTTP 400).
+const MONTH_OFFSETS = [0, 1];
+
+// Computes the JST query window for the month `offset` months from now,
+// using UTC as a pure calendar calculator (no real timezone conversion
+// happening — the numbers ARE the JST wall-clock values, just labeled
+// with +09:00).
+function monthWindow(offset) {
   const { year, month } = currentJSTDate(); // month is 1-based "this month"
-  const start = new Date(Date.UTC(year, month, 1)); // month (0-based) == next month
-  const end = new Date(Date.UTC(year, month + 1, 0)); // day 0 == last day of next month
+  const start = new Date(Date.UTC(year, month - 1 + offset, 1));
+  const end = new Date(Date.UTC(year, month + offset, 0)); // day 0 == last day of the target month
 
   const sy = start.getUTCFullYear();
   const sm = start.getUTCMonth() + 1;
@@ -55,24 +58,21 @@ function buildUrl(startStamp, endStamp) {
   return `https://coubic.com/api/v2/merchants/nissan-heritage-tour/booking_events?renderer=fullcalendar&start=${encStart}&end=${encEnd}`;
 }
 
-// Fetches the current window. Returns:
-//   { events, errorPayload, success, timestamp, outputFile, monthKey }
+// Fetches one month's window. Returns:
+//   { events, errorPayload, success, outputFile, monthKey }
 // `events` is the parsed array on success; `errorPayload` is
 // { errorCode, payload } on failure. Exactly one of the two is set.
-async function fetchEvents() {
-  const timestamp = String(Math.floor(Date.now() / 1000));
-  const { startStamp, endStamp, monthKey } = nextMonthWindow();
+async function fetchMonth(offset) {
+  const { startStamp, endStamp, monthKey } = monthWindow(offset);
 
+  console.error(`🗂️ Month key: ${monthKey}`);
   console.error(`📅 Window start: ${startStamp}`);
   console.error(`📅 Window end: ${endStamp}`);
-  console.error(`🗂️ Month key: ${monthKey}`);
 
   const url = buildUrl(startStamp, endStamp);
   console.error(`🌐 URL: ${url}`);
 
-  const outputDir = 'state/snapshots';
-  fs.mkdirSync(outputDir, { recursive: true });
-  const outputFile = path.join(outputDir, `${monthKey}.json`);
+  const outputFile = path.join('state/snapshots', `${monthKey}.json`);
 
   let response;
   let bodyText;
@@ -85,7 +85,6 @@ async function fetchEvents() {
       events: null,
       errorPayload: { errorCode: 0, payload: err.message },
       success: false,
-      timestamp,
       outputFile,
       monthKey,
     };
@@ -102,14 +101,7 @@ async function fetchEvents() {
 
   if (Array.isArray(events)) {
     console.error(`✅ Fetched OK (HTTP ${response.status})`);
-    return {
-      events,
-      errorPayload: null,
-      success: true,
-      timestamp,
-      outputFile,
-      monthKey,
-    };
+    return { events, errorPayload: null, success: true, outputFile, monthKey };
   }
 
   console.error(response.ok
@@ -119,31 +111,19 @@ async function fetchEvents() {
     events: null,
     errorPayload: { errorCode: response.status, payload: bodyText },
     success: false,
-    timestamp,
     outputFile,
     monthKey,
   };
 }
 
-module.exports = { fetchEvents };
-
-// CLI mode: used by the GitHub Actions workflow. Writes the fetched
-// content to a temp file (crossing a process/step boundary needs a
-// file path) and prints key=value lines to stdout for $GITHUB_OUTPUT.
-// Logs go to stderr. Running locally works the same way — or skip this
-// entirely and call fetchEvents() directly, as run-local.js does.
-if (require.main === module) {
-  fetchEvents().then((result) => {
-    const content = result.success ? result.events : result.errorPayload;
-    const contentFile = path.join(os.tmpdir(), `nissan-content-${result.timestamp}.json`);
-    fs.writeFileSync(contentFile, JSON.stringify(content));
-
-    console.log(`output_file=${result.outputFile}`);
-    console.log(`timestamp=${result.timestamp}`);
-    console.log(`content_file=${contentFile}`);
-    console.log(`success=${result.success}`);
-  }).catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+// Fetches every month in MONTH_OFFSETS. Returns { timestamp, months },
+// where `months` holds one fetchMonth() result per month. All months share
+// the same timestamp, so one run is one snapshot entry per month file.
+async function fetchEvents() {
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const months = [];
+  for (const offset of MONTH_OFFSETS) months.push(await fetchMonth(offset));
+  return { timestamp, months };
 }
+
+module.exports = { fetchEvents };

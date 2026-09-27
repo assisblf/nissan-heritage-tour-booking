@@ -11,11 +11,13 @@ It works as an automated data collector for the **Nissan Heritage Tour** booking
 
 A scheduled workflow (`.github/workflows/fetch-nissan-events.yml`) runs every 30 minutes and:
 
-1. **Fetches** the booking events from the Coubic API for the Nissan Heritage Tour (window: next calendar month, JST)
-2. **Merges** the response into `state/snapshots/<YYYY-MM>.json`, keyed by the Unix epoch of the request — `<YYYY-MM>` is the same target month used in the query window
-3. **Commits and pushes** the updated file to `main` automatically
+1. **Fetches** the booking events from the Coubic API for the Nissan Heritage Tour — one request each for the **current** and **next** calendar month (JST)
+2. **Merges** each response into `state/snapshots/<YYYY-MM>.json`, keyed by the Unix epoch of the run — `<YYYY-MM>` is the month used in that request's query window
+3. **Detects** slots that newly opened (or gained vacancy) since the last run, across both months
+4. **Commits and pushes** the updated files to `main` automatically
+5. **Notifies** via Telegram when new slots were found
 
-If the API returns an error, that snapshot's value is saved in this format instead of the raw payload:
+If the API returns an error for a month, that month's snapshot value is saved in this format instead of the raw payload:
 
 ```json
 {
@@ -83,14 +85,16 @@ nissan-heritage-tour-booking/
 | Merchant | `nissan-heritage-tour` |
 | Endpoint | `/api/v2/merchants/nissan-heritage-tour/booking_events` |
 | Renderer | `fullcalendar` |
-| Window   | First → last day of **next calendar month** (JST, dynamic) |
+| Windows  | First → last day of the **current** and of the **next** calendar month (JST, dynamic), one request each |
 
-The date window is computed dynamically at runtime in JST (UTC+9):
+Each date window is computed dynamically at runtime in JST (UTC+9):
 
-- **`start`** — `YYYY-MM-01T00:00:00+09:00` (first day of next month)
-- **`end`** — `YYYY-MM-<last>T23:59:59+09:00` (last day of next month, accounting for month length)
+- **`start`** — `YYYY-MM-01T00:00:00+09:00` (first day of the month)
+- **`end`** — `YYYY-MM-<last>T23:59:59+09:00` (last day of the month, accounting for month length)
 
-So on any given run the URL looks like:
+The two months are fetched separately because the API rejects windows longer than ~7 weeks (HTTP 400). It also never returns slots that are already in the past, so the current month's snapshots shrink as the month goes on and are often `[]` near its end.
+
+So on any given run the URLs look like:
 
 ```
 https://coubic.com/api/v2/merchants/nissan-heritage-tour/booking_events
@@ -99,7 +103,7 @@ https://coubic.com/api/v2/merchants/nissan-heritage-tour/booking_events
   &end=YYYY-MM-<last>T23:59:59%2B09:00
 ```
 
-The computed window (`JST now`, `Window start`, `Window end`) is printed at the top of each run's log. The same `YYYY-MM` derived for the window is used as the output filename, and each entry inside that file is keyed by the Unix epoch of the request — so entries stay sortable and unambiguous regardless of timezone.
+The computed windows (`Month key`, `Window start`, `Window end`) are printed in each run's log. The same `YYYY-MM` derived for the window is used as the output filename, and each entry inside that file is keyed by the Unix epoch of the request — so entries stay sortable and unambiguous regardless of timezone.
 
 ---
 
