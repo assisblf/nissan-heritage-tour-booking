@@ -16,7 +16,7 @@ function gitCapture(args) {
   }
 }
 
-// Commits nissan-heritage-collection/ + state/ and pushes, retrying once
+// Commits state/ (snapshots + vacancy state) and pushes, retrying once
 // via rebase on conflict.
 // - Leaves your git identity alone if one is already configured (local
 //   runs); only falls back to github-actions[bot] when none is set (a
@@ -29,7 +29,7 @@ function commitAndPush(timestamp, { noPush = false } = {}) {
     git(['config', 'user.email', 'github-actions[bot]@users.noreply.github.com'], { quiet: true });
   }
 
-  git(['add', 'nissan-heritage-collection/', 'state/']);
+  git(['add', 'state/']);
 
   const staged = execFileSync('git', ['diff', '--cached', '--name-only'], { encoding: 'utf8' }).trim();
   if (!staged) {

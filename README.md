@@ -12,7 +12,7 @@ It works as an automated data collector for the **Nissan Heritage Tour** booking
 A scheduled workflow (`.github/workflows/fetch-nissan-events.yml`) runs every 30 minutes and:
 
 1. **Fetches** the booking events from the Coubic API for the Nissan Heritage Tour (window: next calendar month, JST)
-2. **Merges** the response into `nissan-heritage-collection/<YYYY-MM>.json`, keyed by the Unix epoch of the request — `<YYYY-MM>` is the same target month used in the query window
+2. **Merges** the response into `state/snapshots/<YYYY-MM>.json`, keyed by the Unix epoch of the request — `<YYYY-MM>` is the same target month used in the query window
 3. **Commits and pushes** the updated file to `main` automatically
 
 If the API returns an error, that snapshot's value is saved in this format instead of the raw payload:
@@ -61,12 +61,15 @@ nissan-heritage-tour-booking/
 ├── .github/
 │   └── workflows/
 │       └── fetch-nissan-events.yml   # Scheduled workflow
-├── nissan-heritage-collection/
-│   ├── 2026-08.json         # All snapshots targeting Aug 2026
-│   ├── 2026-09.json
-│   └── ...
-├── 1_merge_files_by_month.py  # One-off migration script (old per-timestamp files → grouped format)
-├── heritage-watch.html        # Static viewer: month picker + timestamp slider + calendar
+├── scripts/                      # Workflow scripts (fetch, merge, detect, notify, commit)
+├── state/
+│   ├── snapshots/
+│   │   ├── 2026-08.json          # All raw API snapshots targeting Aug 2026
+│   │   └── ...
+│   └── available-slots/
+│       ├── 2026-08.json          # Last known open slots, used to detect new vacancies
+│       └── ...
+├── index.html                    # Static viewer: month picker + timestamp slider + calendar
 └── README.md
 ```
 
@@ -102,26 +105,14 @@ The computed window (`JST now`, `Window start`, `Window end`) is printed at the 
 
 ## Viewing the data
 
-Open `heritage-watch.html` (served over http/https, e.g. via GitHub Pages — `fetch` won't work from a local `file://` path) to:
+Open `index.html` (served over http/https, e.g. via GitHub Pages — `fetch` won't work from a local `file://` path) to:
 
 1. Pick a month
-2. Load `nissan-heritage-collection/<month>.json`
+2. Load `state/snapshots/<month>.json`
 3. Slide across the snapshots taken for that month
 4. See a calendar with per-day vacancy/capacity for the selected snapshot
 
 Snapshots with no data (`[]`) are skipped by the slider; error snapshots are kept and shown as an error state.
-
----
-
-## Migrating old per-timestamp files
-
-`1_merge_files_by_month.py` is a one-off script that converts the legacy `nissan-heritage-collection/<epoch>.json` files (one file per request) into the grouped `<YYYY-MM>.json` format. Run it once from the repo root:
-
-```bash
-python3 1_merge_files_by_month.py
-```
-
-It groups each file by the target month it fetched (derived from the same next-month logic as the workflow), merges into any existing `<YYYY-MM>.json`, and deletes the original per-timestamp files. Only needed once, for repos with data from before the format change.
 
 ---
 
