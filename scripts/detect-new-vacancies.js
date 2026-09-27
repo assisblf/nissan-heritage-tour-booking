@@ -30,7 +30,7 @@ function detectNewVacancies(events, stateFile) {
   }
 
   const message = newSlots
-    .map((e) => `🎉 ${e.title}\n🗓️ ${e.start} → ${e.end}\n🎫 ${e.vacancy}/${e.capacity} vagas`)
+    .map((e) => `🎉 ${e.title}\n🗓️ ${e.start} → ${e.end}\n🎫 ${e.vacancy}/${e.capacity} spots`)
     .join('\n');
 
   return { hasNew: true, newCount: newSlots.length, newSlots, message };

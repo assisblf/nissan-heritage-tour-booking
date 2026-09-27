@@ -3,7 +3,7 @@
 
 const fs = require('fs');
 
-const TITLE = '🚗 Nova vaga no Nissan Heritage Tour!';
+const TITLE = '🚗 New opening on the Nissan Heritage Tour!';
 const LINK = 'https://assisblf.github.io/nissan-heritage-tour-booking';
 
 // Sends `message` to whichever channel has its env vars set. Works the
