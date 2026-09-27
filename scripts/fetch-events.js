@@ -91,10 +91,19 @@ async function fetchEvents() {
     };
   }
 
+  let events = null;
   if (response.ok) {
+    try {
+      events = JSON.parse(bodyText);
+    } catch {
+      // Leave events null; handled as a failure below.
+    }
+  }
+
+  if (Array.isArray(events)) {
     console.error(`✅ Fetched OK (HTTP ${response.status})`);
     return {
-      events: JSON.parse(bodyText),
+      events,
       errorPayload: null,
       success: true,
       timestamp,
@@ -103,7 +112,9 @@ async function fetchEvents() {
     };
   }
 
-  console.error(`⚠️ Fetch failed (HTTP ${response.status})`);
+  console.error(response.ok
+    ? `⚠️ Unexpected response body (HTTP ${response.status}) — expected a JSON array`
+    : `⚠️ Fetch failed (HTTP ${response.status})`);
   return {
     events: null,
     errorPayload: { errorCode: response.status, payload: bodyText },

@@ -6,7 +6,8 @@ const os = require('os');
 const path = require('path');
 
 // Compares events with vacancy > 0 against a persisted state file of
-// previously-known-open slots (matched by `start`). Always overwrites the
+// previously-known-open slots (matched by `url`, which carries the unique
+// selected_slot id). Always overwrites the
 // state file with the current open set, so a slot that closes and later
 // reopens triggers a fresh notification.
 // Returns { hasNew, newCount, newSlots, message }.
@@ -16,10 +17,10 @@ function detectNewVacancies(events, stateFile) {
   const previous = fs.existsSync(stateFile)
     ? JSON.parse(fs.readFileSync(stateFile, 'utf8'))
     : [];
-  const knownStarts = new Set(previous.map((e) => e.start));
+  const knownUrls = new Set(previous.map((e) => e.url));
 
   const currentOpen = events.filter((e) => (e.vacancy ?? 0) > 0);
-  const newSlots = currentOpen.filter((e) => !knownStarts.has(e.start));
+  const newSlots = currentOpen.filter((e) => !knownUrls.has(e.url));
 
   console.error(`🔎 New open slots since last check: ${newSlots.length}`);
 
@@ -30,8 +31,8 @@ function detectNewVacancies(events, stateFile) {
   }
 
   const message = newSlots
-    .map((e) => `🎉 ${e.title}\n🗓️ ${e.start} → ${e.end}\n🎫 ${e.vacancy}/${e.capacity} spots`)
-    .join('\n');
+    .map((e) => `🎉 ${e.title}\n🗓️ ${e.start} → ${e.end}\n🎫 ${e.vacancy}/${e.capacity} spots\n👉 https://coubic.com${e.url}`)
+    .join('\n\n');
 
   return { hasNew: true, newCount: newSlots.length, newSlots, message };
 }

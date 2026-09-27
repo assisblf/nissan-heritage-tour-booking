@@ -2,6 +2,7 @@
 'use strict';
 
 const { execFileSync } = require('child_process');
+const fs = require('fs');
 
 function git(args, opts = {}) {
   return execFileSync('git', args, { encoding: 'utf8', stdio: opts.quiet ? 'pipe' : 'inherit', ...opts });
@@ -44,6 +45,10 @@ function commitAndPush(timestamp, { noPush = false } = {}) {
   }
 
   const branch = gitCapture(['symbolic-ref', '--short', 'HEAD']);
+  if (!branch) {
+    console.error('❌ Detached HEAD — cannot determine which branch to push.');
+    process.exit(1);
+  }
 
   try {
     git(['push', 'origin', branch]);
@@ -58,9 +63,9 @@ function commitAndPush(timestamp, { noPush = false } = {}) {
       const conflicted = gitCapture(['diff', '--name-only', '--diff-filter=U']).split('\n').filter(Boolean);
       for (const f of conflicted) {
         console.error(`--- ${f} ---`);
-        try { git(['show', `:${f}`]); } catch { /* ignore */ }
+        try { console.error(fs.readFileSync(f, 'utf8')); } catch { /* ignore */ }
       }
-      // Leave the rebase in progress cleanly if one was started.
+      // Abort the rebase if one was started, so the repo is left clean.
       try { git(['rebase', '--abort']); } catch { /* nothing to abort */ }
       process.exit(1);
     }

@@ -5,6 +5,11 @@ on:
     - cron: '*/30 * * * *'
   workflow_dispatch:
 
+# Serialize runs so two overlapping jobs never race on the same push.
+concurrency:
+  group: fetch-nissan-events
+  cancel-in-progress: false
+
 jobs:
   fetch-and-commit:
     runs-on: ubuntu-latest
