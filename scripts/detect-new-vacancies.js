@@ -56,8 +56,8 @@ function formatMessage(slots, knownVacancy) {
     const weekday = WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
     const lines = daySlots.map((e) => {
       const time = `${e.start.slice(11)}–${e.end.slice(11)}`;
-      const status = knownVacancy.has(e.url) ? `(was ${knownVacancy.get(e.url)})` : '🆕';
-      return `  • [${time}](https://coubic.com${e.url}) · ${e.vacancy}/${e.capacity} spots ${status}`;
+      const was = knownVacancy.get(e.url) ?? 0;
+      return `  • [${time}](https://coubic.com${e.url}) · ${e.vacancy}/${e.capacity} spots (was ${was})`;
     });
     return [`🗓️ ${weekday} ${m}/${d}`, ...lines].join('\n');
   }).join('\n\n');
