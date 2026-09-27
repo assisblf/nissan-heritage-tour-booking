@@ -18,7 +18,7 @@ const { commitAndPush } = require('./commit-and-push');
 
   mergeSnapshot(outputFile, success ? events : errorPayload, timestamp);
 
-  const detection = success ? detectNewVacancies(events, 'state/available_vacancies') : null;
+  const detection = success ? detectNewVacancies(events, 'state/available-slots') : null;
 
   // Commit before notifying so a failed push doesn't leave a sent
   // notification without persisted state (which would cause a duplicate).

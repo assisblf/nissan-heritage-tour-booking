@@ -66,7 +66,7 @@ nissan-heritage-tour-booking/
 │   ├── snapshots/
 │   │   ├── 2026-08.json          # All raw API snapshots targeting Aug 2026
 │   │   └── ...
-│   └── available_vacancies/
+│   └── available-slots/
 │       ├── 2026-08.json          # Last known open slots, used to detect new vacancies
 │       └── ...
 ├── index.html                    # Static viewer: month picker + timestamp slider + calendar

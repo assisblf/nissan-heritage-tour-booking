@@ -79,7 +79,7 @@ function formatMessage(slots, knownVacancy) {
 module.exports = { detectNewVacancies };
 
 if (require.main === module) {
-  const [contentFile, stateDir = 'state/available_vacancies'] = process.argv.slice(2);
+  const [contentFile, stateDir = 'state/available-slots'] = process.argv.slice(2);
   if (!contentFile) {
     console.error('Usage: detect-new-vacancies.js <content_file> [state_dir]');
     process.exit(1);

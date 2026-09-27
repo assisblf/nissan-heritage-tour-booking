@@ -39,7 +39,7 @@ jobs:
         run: |
           node scripts/detect-new-vacancies.js \
             "${{ steps.fetch.outputs.content_file }}" \
-            "state/available_vacancies" >> "$GITHUB_OUTPUT"
+            "state/available-slots" >> "$GITHUB_OUTPUT"
 
       # Commit before notifying: if the push fails, the job stops here and the
       # next run re-detects the same slots, instead of sending a duplicate.
