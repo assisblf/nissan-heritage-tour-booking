@@ -22,29 +22,14 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Fetch booking events
-        id: fetch
-        run: node scripts/fetch-events.js >> "$GITHUB_OUTPUT"
-
-      - name: Merge into month file
-        run: |
-          node scripts/merge-snapshot.js \
-            "${{ steps.fetch.outputs.output_file }}" \
-            "${{ steps.fetch.outputs.content_file }}" \
-            "${{ steps.fetch.outputs.timestamp }}"
-
-      - name: Detect new vacancies
-        if: steps.fetch.outputs.success == 'true'
+      - name: Fetch events and detect new vacancies
         id: detect
-        run: |
-          node scripts/detect-new-vacancies.js \
-            "${{ steps.fetch.outputs.content_file }}" \
-            "state/available-slots" >> "$GITHUB_OUTPUT"
+        run: node scripts/fetch-and-detect.js >> "$GITHUB_OUTPUT"
 
       # Commit before notifying: if the push fails, the job stops here and the
       # next run re-detects the same slots, instead of sending a duplicate.
       - name: Commit and push
-        run: node scripts/commit-and-push.js "${{ steps.fetch.outputs.timestamp }}"
+        run: node scripts/commit-and-push.js "${{ steps.detect.outputs.timestamp }}"
 
       - name: Send notification
         if: steps.detect.outputs.has_new == 'true'
