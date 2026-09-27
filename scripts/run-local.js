@@ -19,7 +19,7 @@ const { commitAndPush } = require('./commit-and-push');
   mergeSnapshot(outputFile, success ? events : errorPayload, timestamp);
 
   if (success) {
-    const { hasNew, newCount, message } = detectNewVacancies(events, 'state/available-slots.json');
+    const { hasNew, newCount, message } = detectNewVacancies(events, 'state/available-slots');
     if (hasNew) {
       console.log(`🎉 ${newCount} new slot(s) — sending notification`);
       await notify(message);

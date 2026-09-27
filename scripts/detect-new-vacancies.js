@@ -5,28 +5,42 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-// Compares events with vacancy > 0 against a persisted state file of
-// previously-known-open slots (matched by `url`, which carries the unique
-// selected_slot id). A slot counts as new if it wasn't open before or its
-// vacancy increased. Always overwrites the state file with the current open
-// set, so a slot that closes and later reopens triggers a fresh notification.
+// Compares events with vacancy > 0 against persisted per-month state files
+// (<stateDir>/YYYY-MM.json, keyed by each event's start month) of
+// previously-known-open slots, matched by `url`, which carries the unique
+// selected_slot id. A slot counts as new if it wasn't open before or its
+// vacancy increased. Overwrites the state file of every month present in
+// `events` with its current open set, so a slot that closes and later
+// reopens triggers a fresh notification; other months are left untouched.
 // Returns { hasNew, newCount, newSlots, message }.
-function detectNewVacancies(events, stateFile) {
-  fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+function detectNewVacancies(events, stateDir) {
+  fs.mkdirSync(stateDir, { recursive: true });
 
-  const previous = fs.existsSync(stateFile)
-    ? JSON.parse(fs.readFileSync(stateFile, 'utf8'))
-    : [];
-  const knownVacancy = new Map(previous.map((e) => [e.url, e.vacancy ?? 0]));
+  const byMonth = new Map();
+  for (const e of events) {
+    const month = e.start.slice(0, 7);
+    if (!byMonth.has(month)) byMonth.set(month, []);
+    byMonth.get(month).push(e);
+  }
 
-  const currentOpen = events.filter((e) => (e.vacancy ?? 0) > 0);
-  const newSlots = currentOpen.filter(
-    (e) => !knownVacancy.has(e.url) || e.vacancy > knownVacancy.get(e.url),
-  );
+  const knownVacancy = new Map();
+  const newSlots = [];
+  for (const [month, monthEvents] of byMonth) {
+    const stateFile = path.join(stateDir, `${month}.json`);
+    const previous = fs.existsSync(stateFile)
+      ? JSON.parse(fs.readFileSync(stateFile, 'utf8'))
+      : [];
+    for (const e of previous) knownVacancy.set(e.url, e.vacancy ?? 0);
+
+    const currentOpen = monthEvents.filter((e) => (e.vacancy ?? 0) > 0);
+    newSlots.push(...currentOpen.filter(
+      (e) => !knownVacancy.has(e.url) || e.vacancy > knownVacancy.get(e.url),
+    ));
+
+    fs.writeFileSync(stateFile, JSON.stringify(currentOpen, null, 2));
+  }
 
   console.error(`🔎 New or increased open slots since last check: ${newSlots.length}`);
-
-  fs.writeFileSync(stateFile, JSON.stringify(currentOpen, null, 2));
 
   if (newSlots.length === 0) {
     return { hasNew: false, newCount: 0, newSlots: [], message: null };
@@ -66,13 +80,13 @@ function formatMessage(slots, knownVacancy) {
 module.exports = { detectNewVacancies };
 
 if (require.main === module) {
-  const [contentFile, stateFile = 'state/available-slots.json'] = process.argv.slice(2);
+  const [contentFile, stateDir = 'state/available-slots'] = process.argv.slice(2);
   if (!contentFile) {
-    console.error('Usage: detect-new-vacancies.js <content_file> [state_file]');
+    console.error('Usage: detect-new-vacancies.js <content_file> [state_dir]');
     process.exit(1);
   }
   const events = JSON.parse(fs.readFileSync(contentFile, 'utf8'));
-  const result = detectNewVacancies(events, stateFile);
+  const result = detectNewVacancies(events, stateDir);
 
   if (result.hasNew) {
     const messageFile = path.join(os.tmpdir(), `nissan-message-${Date.now()}.txt`);
