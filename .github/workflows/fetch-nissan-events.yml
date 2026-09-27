@@ -5,116 +5,52 @@ on:
     - cron: '*/30 * * * *'
   workflow_dispatch:
 
+# Serialize runs so two overlapping jobs never race on the same push.
+concurrency:
+  group: fetch-nissan-events
+  cancel-in-progress: false
+
 jobs:
   fetch-and-commit:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Fetch booking events
         id: fetch
+        run: node scripts/fetch-events.js >> "$GITHUB_OUTPUT"
+
+      - name: Merge into month file
         run: |
-          # ── Timestamps ────────────────────────────────────────────────────────
-          # Current time as Unix epoch (used as the entry key)
-          TIMESTAMP=$(date -u +"%s")
+          node scripts/merge-snapshot.js \
+            "${{ steps.fetch.outputs.output_file }}" \
+            "${{ steps.fetch.outputs.content_file }}" \
+            "${{ steps.fetch.outputs.timestamp }}"
 
-          # Current time in JST (UTC+9) — used only for the query window below
-          JST_NOW=$(TZ="Asia/Tokyo" date +"%Y-%m-%dT%H:%M:%S+09:00")
+      - name: Detect new vacancies
+        if: steps.fetch.outputs.success == 'true'
+        id: detect
+        run: |
+          node scripts/detect-new-vacancies.js \
+            "${{ steps.fetch.outputs.content_file }}" \
+            "state/available-slots" >> "$GITHUB_OUTPUT"
 
-          # First day of next month in JST
-          NEXT_MONTH_START=$(TZ="Asia/Tokyo" date -d "$(date -d 'today' +%Y-%m-01) +1 month" +"%Y-%m-01T00:00:00+09:00")
-
-          # Last moment of the last day of next month in JST
-          NEXT_MONTH_END=$(TZ="Asia/Tokyo" date -d "$(date -d 'today' +%Y-%m-01) +2 months -1 day" +"%Y-%m-%dT23:59:59+09:00")
-
-          echo "🕐 JST now:        $JST_NOW"
-          echo "📅 Window start:   $NEXT_MONTH_START"
-          echo "📅 Window end:     $NEXT_MONTH_END"
-
-          # ── Month key for grouping (same month as the query window) ─────────────
-          MONTH_KEY=$(echo "$NEXT_MONTH_START" | cut -c1-7)
-          echo "🗂️  Month key: $MONTH_KEY"
-
-          # ── Build URL ─────────────────────────────────────────────────────────
-          ENCODED_START=$(echo "$NEXT_MONTH_START" | sed 's/+/%2B/g')
-          ENCODED_END=$(echo "$NEXT_MONTH_END"   | sed 's/+/%2B/g')
-
-          URL="https://coubic.com/api/v2/merchants/nissan-heritage-tour/booking_events?renderer=fullcalendar&start=${ENCODED_START}&end=${ENCODED_END}"
-          echo "🌐 URL: $URL"
-
-          # ── Fetch ─────────────────────────────────────────────────────────────
-          OUTPUT_DIR="nissan-heritage-collection"
-          OUTPUT_FILE="${OUTPUT_DIR}/${MONTH_KEY}.json"
-          mkdir -p "$OUTPUT_DIR"
-
-          HTTP_CODE=$(curl -s -o /tmp/response_body.txt -w "%{http_code}" "$URL")
-
-          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
-            CONTENT_FILE="/tmp/response_body.txt"
-            echo "✅ Fetched OK (HTTP $HTTP_CODE)"
-          else
-            jq -n --argjson code "$HTTP_CODE" --arg payload "$(cat /tmp/response_body.txt)" \
-              '{errorCode: $code, payload: $payload}' > /tmp/error_body.json
-            CONTENT_FILE="/tmp/error_body.json"
-            echo "⚠️ Fetch failed (HTTP $HTTP_CODE)"
-          fi
-
-          # ── Merge into month file ────────────────────────────────────────────
-          if [ -f "$OUTPUT_FILE" ]; then
-            jq --arg ts "$TIMESTAMP" --slurpfile content "$CONTENT_FILE" \
-              '. + {($ts): $content[0]}' "$OUTPUT_FILE" > /tmp/merged.json
-          else
-            jq -n --arg ts "$TIMESTAMP" --slurpfile content "$CONTENT_FILE" \
-              '{($ts): $content[0]}' > /tmp/merged.json
-          fi
-
-          mv /tmp/merged.json "$OUTPUT_FILE"
-          echo "✅ Saved entry $TIMESTAMP into $OUTPUT_FILE"
-
-          echo "output_file=$OUTPUT_FILE" >> "$GITHUB_OUTPUT"
-          echo "timestamp=$TIMESTAMP"     >> "$GITHUB_OUTPUT"
-
+      # Commit before notifying: if the push fails, the job stops here and the
+      # next run re-detects the same slots, instead of sending a duplicate.
       - name: Commit and push
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+        run: node scripts/commit-and-push.js "${{ steps.fetch.outputs.timestamp }}"
 
-          git add nissan-heritage-collection/
-
-          if git diff --cached --quiet; then
-            echo "ℹ️ No changes to commit."
-            exit 0
-          fi
-
-          git commit -m "chore: fetch nissan events [epoch: ${{ steps.fetch.outputs.timestamp }}]"
-
-          # Try to push; on conflict, pull --rebase and retry once
-          if ! git push origin main; then
-            echo "⚠️ Push failed — attempting rebase pull..."
-
-            git fetch origin main
-
-            if git rebase origin/main; then
-              if ! git push origin main; then
-                echo "❌ Push failed again after rebase. Showing conflicting file contents:"
-                git diff HEAD origin/main -- nissan-heritage-collection/ | cat
-                for f in nissan-heritage-collection/*.json; do
-                  echo "--- $f ---"
-                  cat "$f"
-                done
-                exit 1
-              fi
-            else
-              echo "❌ Rebase failed. Showing conflicting file contents:"
-              for f in $(git diff --name-only --diff-filter=U); do
-                echo "--- $f ---"
-                cat "$f"
-              done
-              git rebase --abort
-              exit 1
-            fi
-          fi
-
-          echo "✅ Pushed successfully."
+      - name: Send notification
+        if: steps.detect.outputs.has_new == 'true'
+        # A failed notification shouldn't fail the run.
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node scripts/notify.js "${{ steps.detect.outputs.message_file }}"
