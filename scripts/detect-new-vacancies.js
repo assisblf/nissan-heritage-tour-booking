@@ -72,7 +72,7 @@ function formatMessage(slots, knownVacancy) {
       const was = knownVacancy.get(e.url) ?? 0;
       return `  • [${time}](https://coubic.com${e.url}) · ${e.vacancy}/${e.capacity} spots (was ${was})`;
     });
-    return [`🗓️ ${weekday} ${m}/${d}`, ...lines].join('\n');
+    return [`🗓️ ${weekday} ${day}`, ...lines].join('\n');
   }).join('\n\n');
 }
 
