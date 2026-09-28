@@ -1,8 +1,8 @@
 name: Fetch Nissan Heritage Events
 
+# Triggered externally by cron-job.org via the workflow_dispatch API, since
+# GitHub's own `schedule` trigger is best-effort and often delayed or dropped.
 on:
-  schedule:
-    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 # Serialize runs so two overlapping jobs never race on the same push.

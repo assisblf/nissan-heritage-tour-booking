@@ -3,13 +3,13 @@
 This is a project that polls and snapshots data from Nissan Heritage tour booking and presents it in the following page:
 https://assisblf.github.io/nissan-heritage-tour-booking
 
-It works as an automated data collector for the **Nissan Heritage Tour** booking events, powered by a GitHub Actions workflow that polls the [Coubic](https://coubic.com) API every 30 minutes and snapshots the responses as JSON, grouped by month. Includes a static HTML viewer to browse vacancy history on a calendar.
+It works as an automated data collector for the **Nissan Heritage Tour** booking events, powered by a GitHub Actions workflow that polls the [Coubic](https://coubic.com) API on a schedule and snapshots the responses as JSON, grouped by month. Includes a static HTML viewer to browse vacancy history on a calendar.
 
 ---
 
 ## How it works
 
-A scheduled workflow (`.github/workflows/fetch-nissan-events.yml`) runs every 30 minutes and:
+A workflow (`.github/workflows/fetch-nissan-events.yml`), triggered on a schedule by [cron-job.org](https://cron-job.org), runs and:
 
 1. **Fetches** the booking events from the Coubic API for the Nissan Heritage Tour — one request each for the **current** and **next** calendar month (JST)
 2. **Merges** each response into `state/snapshots/<YYYY-MM>.json`, keyed by the Unix epoch of the run — `<YYYY-MM>` is the month used in that request's query window
@@ -62,7 +62,7 @@ An empty array (`[]`) means the tour dates for that month hadn't been disclosed 
 nissan-heritage-tour-booking/
 ├── .github/
 │   └── workflows/
-│       └── fetch-nissan-events.yml   # Scheduled workflow
+│       └── fetch-nissan-events.yml   # Fetch workflow (dispatched by cron-job.org)
 ├── scripts/                      # Workflow scripts (fetch, merge, detect, notify, commit)
 ├── state/
 │   ├── snapshots/
@@ -128,9 +128,19 @@ Go to **Settings → Actions → General → Workflow permissions** and select *
 
 This allows the `github-actions[bot]` to commit and push new snapshots automatically.
 
-### 2. That's it
+### 2. Schedule it on cron-job.org
 
-Once the permission is set, the workflow will run on its own schedule. You can also trigger it manually anytime from the **Actions** tab using the **Run workflow** button.
+GitHub's built-in `schedule` trigger is best-effort (runs get delayed or dropped under load), so the workflow is started externally instead:
+
+1. Create a **fine-grained token** (Settings → Developer settings) scoped to this repository only, with **Repository permissions → Actions: Read and write**. Note: *Actions*, not *Workflows*.
+2. On [cron-job.org](https://cron-job.org), create a cronjob with:
+   - **URL:** `https://api.github.com/repos/<owner>/nissan-heritage-tour-booking/actions/workflows/fetch-nissan-events.yml/dispatches`
+   - **Method:** `POST`
+   - **Headers:** `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2022-11-28`, `Content-Type: application/json`
+   - **Body:** `{"ref":"main"}`
+3. A successful test run returns `204 No Content`. Renew the token before it expires, or runs will fail with `401`.
+
+You can also trigger it manually anytime from the **Actions** tab using the **Run workflow** button.
 
 ---
 
