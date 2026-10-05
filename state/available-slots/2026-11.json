@@ -1,65 +1,7 @@
 [
   {
     "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 5,
-    "capacity": 40,
-    "modelType": "EVENT_SCHEME",
-    "waitingList": false,
-    "full": false,
-    "passwordProtected": false,
-    "start": "2026-11-05 10:00",
-    "end": "2026-11-05 11:30",
-    "allDay": false,
-    "color": "#4A67A5",
-    "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266264",
-    "submit": true,
-    "meta": {
-      "merchant": {
-        "id": "nissan-heritage-tour"
-      },
-      "resource": {
-        "id": "3963648"
-      }
-    },
-    "classNames": [],
-    "params": {
-      "selectedSlot": 98266264,
-      "selectedDate": null
-    },
-    "is_registered_waiting_list": false
-  },
-  {
-    "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 2,
-    "capacity": 40,
-    "modelType": "EVENT_SCHEME",
-    "waitingList": false,
-    "full": false,
-    "passwordProtected": false,
-    "start": "2026-11-10 10:00",
-    "end": "2026-11-10 11:30",
-    "allDay": false,
-    "color": "#4A67A5",
-    "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266266",
-    "submit": true,
-    "meta": {
-      "merchant": {
-        "id": "nissan-heritage-tour"
-      },
-      "resource": {
-        "id": "3963648"
-      }
-    },
-    "classNames": [],
-    "params": {
-      "selectedSlot": 98266266,
-      "selectedDate": null
-    },
-    "is_registered_waiting_list": false
-  },
-  {
-    "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 5,
+    "vacancy": 1,
     "capacity": 40,
     "modelType": "EVENT_SCHEME",
     "waitingList": false,
@@ -88,7 +30,7 @@
   },
   {
     "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 15,
+    "vacancy": 9,
     "capacity": 40,
     "modelType": "EVENT_SCHEME",
     "waitingList": false,
@@ -117,36 +59,7 @@
   },
   {
     "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 1,
-    "capacity": 45,
-    "modelType": "EVENT_SCHEME",
-    "waitingList": false,
-    "full": false,
-    "passwordProtected": false,
-    "start": "2026-11-15 14:00",
-    "end": "2026-11-15 15:30",
-    "allDay": false,
-    "color": "#4A67A5",
-    "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413830",
-    "submit": true,
-    "meta": {
-      "merchant": {
-        "id": "nissan-heritage-tour"
-      },
-      "resource": {
-        "id": "3963648"
-      }
-    },
-    "classNames": [],
-    "params": {
-      "selectedSlot": 98413830,
-      "selectedDate": null
-    },
-    "is_registered_waiting_list": false
-  },
-  {
-    "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 16,
+    "vacancy": 12,
     "capacity": 40,
     "modelType": "EVENT_SCHEME",
     "waitingList": false,
@@ -175,7 +88,7 @@
   },
   {
     "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 4,
+    "vacancy": 2,
     "capacity": 40,
     "modelType": "EVENT_SCHEME",
     "waitingList": false,
@@ -204,36 +117,7 @@
   },
   {
     "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 2,
-    "capacity": 40,
-    "modelType": "EVENT_SCHEME",
-    "waitingList": false,
-    "full": false,
-    "passwordProtected": false,
-    "start": "2026-11-23 14:00",
-    "end": "2026-11-23 15:30",
-    "allDay": false,
-    "color": "#4A67A5",
-    "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98541751",
-    "submit": true,
-    "meta": {
-      "merchant": {
-        "id": "nissan-heritage-tour"
-      },
-      "resource": {
-        "id": "3963648"
-      }
-    },
-    "classNames": [],
-    "params": {
-      "selectedSlot": 98541751,
-      "selectedDate": null
-    },
-    "is_registered_waiting_list": false
-  },
-  {
-    "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 13,
+    "vacancy": 4,
     "capacity": 40,
     "modelType": "EVENT_SCHEME",
     "waitingList": false,
@@ -262,7 +146,7 @@
   },
   {
     "title": "11月見学会【Heritage Collection Tour in Nov.】",
-    "vacancy": 15,
+    "vacancy": 4,
     "capacity": 40,
     "modelType": "EVENT_SCHEME",
     "waitingList": false,
