@@ -355579,5 +355579,903 @@
       },
       "is_registered_waiting_list": false
     }
+  ],
+  "1791294621": [
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-01 10:00",
+      "end": "2026-11-01 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413793",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413793,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-01 14:00",
+      "end": "2026-11-01 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413794",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413794,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-03 10:00",
+      "end": "2026-11-03 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98541748",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98541748,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-03 14:00",
+      "end": "2026-11-03 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98541749",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98541749,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-05 10:00",
+      "end": "2026-11-05 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266264",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266264,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-05 14:00",
+      "end": "2026-11-05 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266265",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266265,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-10 10:00",
+      "end": "2026-11-10 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266266",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266266,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-10 14:00",
+      "end": "2026-11-10 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266267",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266267,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-12 10:00",
+      "end": "2026-11-12 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266268",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266268,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-12 14:00",
+      "end": "2026-11-12 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266269",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266269,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-14 10:00",
+      "end": "2026-11-14 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413827",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413827,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-14 14:00",
+      "end": "2026-11-14 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413828",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413828,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-15 10:00",
+      "end": "2026-11-15 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413829",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413829,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-15 14:00",
+      "end": "2026-11-15 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413830",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413830,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-19 10:00",
+      "end": "2026-11-19 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266273",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266273,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-19 14:00",
+      "end": "2026-11-19 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266435",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266435,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-21 10:00",
+      "end": "2026-11-21 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98583833",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98583833,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-21 14:00",
+      "end": "2026-11-21 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98583835",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98583835,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-22 10:00",
+      "end": "2026-11-22 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413861",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413861,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-22 14:00",
+      "end": "2026-11-22 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413862",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413862,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-23 10:00",
+      "end": "2026-11-23 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98541750",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98541750,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-23 14:00",
+      "end": "2026-11-23 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98541751",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98541751,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-26 10:00",
+      "end": "2026-11-26 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266441",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266441,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 40,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-26 14:00",
+      "end": "2026-11-26 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98266442",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98266442,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-28 10:00",
+      "end": "2026-11-28 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413863",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413863,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-28 14:00",
+      "end": "2026-11-28 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413864",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413864,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-29 10:00",
+      "end": "2026-11-29 11:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413866",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413866,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    },
+    {
+      "title": "11月見学会【Heritage Collection Tour in Nov.】",
+      "vacancy": 0,
+      "capacity": 45,
+      "modelType": "EVENT_SCHEME",
+      "waitingList": false,
+      "full": true,
+      "passwordProtected": false,
+      "start": "2026-11-29 14:00",
+      "end": "2026-11-29 15:30",
+      "allDay": false,
+      "color": "#4A67A5",
+      "url": "/reserve/nissan-heritage-tour/3963648?selected_slot=98413868",
+      "submit": true,
+      "meta": {
+        "merchant": {
+          "id": "nissan-heritage-tour"
+        },
+        "resource": {
+          "id": "3963648"
+        }
+      },
+      "classNames": [
+        "full",
+        "disabled"
+      ],
+      "params": {
+        "selectedSlot": 98413868,
+        "selectedDate": null
+      },
+      "is_registered_waiting_list": false
+    }
   ]
 }
