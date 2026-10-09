@@ -7,11 +7,11 @@
     "waitingList": false,
     "full": false,
     "passwordProtected": false,
-    "start": "2026-10-11 10:00",
-    "end": "2026-10-11 11:30",
+    "start": "2026-10-11 14:00",
+    "end": "2026-10-11 15:30",
     "allDay": false,
     "color": "#4A67A5",
-    "url": "/reserve/nissan-heritage-tour/4379095?selected_slot=97349155",
+    "url": "/reserve/nissan-heritage-tour/4379095?selected_slot=97349156",
     "submit": true,
     "meta": {
       "merchant": {
@@ -23,7 +23,7 @@
     },
     "classNames": [],
     "params": {
-      "selectedSlot": 97349155,
+      "selectedSlot": 97349156,
       "selectedDate": null
     },
     "is_registered_waiting_list": false
