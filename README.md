@@ -12,7 +12,7 @@ It works as an automated data collector for the **Nissan Heritage Tour** booking
 A workflow (`.github/workflows/fetch-nissan-events.yml`), triggered on a schedule by [cron-job.org](https://cron-job.org), runs and:
 
 1. **Fetches** the booking events from the Coubic API for the Nissan Heritage Tour — one request each for the **current** and **next** calendar month (JST)
-2. **Merges** each response into `state/snapshots/<YYYY-MM>.json`, keyed by the Unix epoch of the run — `<YYYY-MM>` is the month used in that request's query window
+2. **Merges** each response into `state/snapshots/<YYYY-MM>/<YYYY-MM-DD>.json`, keyed by the Unix epoch of the run — `<YYYY-MM>` is the month used in that request's query window and `<YYYY-MM-DD>` is the JST day of the run. Files are split per day (and stored without indentation) to stay under GitHub's 100 MB file limit; each month's `index.json` lists its day files
 3. **Detects** slots that newly opened (or gained vacancy) since the last run, across both months
 4. **Commits and pushes** the updated files to `main` automatically
 5. **Notifies** via Telegram when new slots were found
@@ -66,7 +66,10 @@ nissan-heritage-tour-booking/
 ├── scripts/                      # Workflow scripts (fetch, merge, detect, notify, commit)
 ├── state/
 │   ├── snapshots/
-│   │   ├── 2026-08.json          # All raw API snapshots targeting Aug 2026
+│   │   ├── 2026-08/              # All raw API snapshots targeting Aug 2026
+│   │   │   ├── index.json        # List of the day files below
+│   │   │   ├── 2026-07-01.json   # Snapshots fetched on Jul 1 (JST)
+│   │   │   └── ...
 │   │   └── ...
 │   └── available-slots/
 │       ├── 2026-08.json          # Last known open slots, used to detect new vacancies
@@ -112,7 +115,7 @@ The computed windows (`Month key`, `Window start`, `Window end`) are printed in 
 Open `index.html` (served over http/https, e.g. via GitHub Pages — `fetch` won't work from a local `file://` path) to:
 
 1. Pick a month
-2. Load `state/snapshots/<month>.json`
+2. Load every day file in `state/snapshots/<month>/`
 3. Slide across the snapshots taken for that month
 4. See a calendar with per-day vacancy/capacity for the selected snapshot
 

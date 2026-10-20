@@ -59,7 +59,7 @@ function buildUrl(startStamp, endStamp) {
 }
 
 // Fetches one month's window. Returns:
-//   { events, errorPayload, success, outputFile, monthKey }
+//   { events, errorPayload, success, outputDir, monthKey }
 // `events` is the parsed array on success; `errorPayload` is
 // { errorCode, payload } on failure. Exactly one of the two is set.
 async function fetchMonth(offset) {
@@ -72,7 +72,7 @@ async function fetchMonth(offset) {
   const url = buildUrl(startStamp, endStamp);
   console.error(`🌐 URL: ${url}`);
 
-  const outputFile = path.join('state/snapshots', `${monthKey}.json`);
+  const outputDir = path.join('state/snapshots', monthKey);
 
   let response;
   let bodyText;
@@ -85,7 +85,7 @@ async function fetchMonth(offset) {
       events: null,
       errorPayload: { errorCode: 0, payload: err.message },
       success: false,
-      outputFile,
+      outputDir,
       monthKey,
     };
   }
@@ -101,7 +101,7 @@ async function fetchMonth(offset) {
 
   if (Array.isArray(events)) {
     console.error(`✅ Fetched OK (HTTP ${response.status})`);
-    return { events, errorPayload: null, success: true, outputFile, monthKey };
+    return { events, errorPayload: null, success: true, outputDir, monthKey };
   }
 
   console.error(response.ok
@@ -111,14 +111,14 @@ async function fetchMonth(offset) {
     events: null,
     errorPayload: { errorCode: response.status, payload: bodyText },
     success: false,
-    outputFile,
+    outputDir,
     monthKey,
   };
 }
 
 // Fetches every month in MONTH_OFFSETS. Returns { timestamp, months },
 // where `months` holds one fetchMonth() result per month. All months share
-// the same timestamp, so one run is one snapshot entry per month file.
+// the same timestamp, so one run is one snapshot entry per month.
 async function fetchEvents() {
   const timestamp = String(Math.floor(Date.now() / 1000));
   const months = [];

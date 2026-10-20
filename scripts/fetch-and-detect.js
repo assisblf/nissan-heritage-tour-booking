@@ -17,7 +17,7 @@ async function fetchAndDetect(stateDir = 'state/available-slots') {
   const { timestamp, months } = await fetchEvents();
 
   for (const m of months) {
-    mergeSnapshot(m.outputFile, m.success ? m.events : m.errorPayload, timestamp);
+    mergeSnapshot(m.outputDir, m.success ? m.events : m.errorPayload, timestamp);
   }
 
   const ok = months.filter((m) => m.success);
