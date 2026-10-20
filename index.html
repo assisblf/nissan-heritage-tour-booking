@@ -353,7 +353,8 @@
 
 <script>
     (function(){
-        // Monthly JSON files live next to this page: ./state/snapshots/YYYY-MM.json
+        // Snapshots live next to this page: ./state/snapshots/YYYY-MM/YYYY-MM-DD.json,
+        // one file per JST fetch day, listed in ./state/snapshots/YYYY-MM/index.json
         const BASE_PATH = './state/snapshots';
         const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
@@ -391,8 +392,9 @@
                 return;
             }
             currentMonthKey = monthKey;
-            const url = `${BASE_PATH}/${monthKey}.json`;
-            filenameLabel.textContent = url;
+            const dir = `${BASE_PATH}/${monthKey}`;
+            const url = `${dir}/index.json`;
+            filenameLabel.textContent = `${dir}/`;
             setStatus(`Loading ${url} …`);
             calendar.style.display = 'none';
             sliderBar.classList.remove('visible');
@@ -403,14 +405,22 @@
                     setStatus(`Could not load ${url} (HTTP ${res.status}). Check the month.`, true);
                     return;
                 }
-                const json = await res.json();
+                // Snapshots are split into one file per JST fetch day; merge them.
+                const dayFiles = await res.json();
+                setStatus(`Loading ${dayFiles.length} day files from ${dir}/ …`);
+                const days = await Promise.all(dayFiles.map(async f => {
+                    const r = await fetch(`${dir}/${f}`, { cache: 'no-store' });
+                    if(!r.ok) throw new Error(`${dir}/${f} returned HTTP ${r.status}`);
+                    return r.json();
+                }));
+                const json = Object.assign({}, ...days);
                 dataset = json;
                 timestamps = Object.keys(json)
                     .filter(ts => hasData(json[ts]))
                     .sort((a,b) => Number(a) - Number(b));
 
                 if(timestamps.length === 0){
-                    setStatus(`${url} loaded, but has no snapshots yet.`, true);
+                    setStatus(`${dir}/ loaded, but has no snapshots yet.`, true);
                     return;
                 }
 
